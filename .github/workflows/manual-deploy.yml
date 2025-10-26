@@ -106,14 +106,22 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: 🏗️ Build and Deploy Backend
-      uses: akhileshns/heroku-deploy@v3.13.15
-      with:
-        heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-        heroku_app_name: "ai-story-book-backend"
-        heroku_email: ${{ secrets.HEROKU_EMAIL }}
-        appdir: "backend"
-        buildpack: "https://github.com/heroku/heroku-buildpack-gradle.git"
+    - name: 📦 Install Heroku CLI
+      run: |
+        curl https://cli-assets.heroku.com/install-ubuntu.sh | sh
+        heroku --version
+
+    - name: 🔐 Login to Heroku
+      run: |
+        echo "${{ secrets.HEROKU_API_KEY }}" | heroku auth:token
+        heroku auth:whoami
+
+    - name: 🏗️ Deploy Backend to Heroku
+      run: |
+        git config user.email "action@github.com"
+        git config user.name "GitHub Actions"
+        git remote add heroku-backend https://heroku:${{ secrets.HEROKU_API_KEY }}@git.heroku.com/ai-story-book-backend.git
+        git subtree push --prefix=backend heroku-backend main || git push heroku-backend `git subtree split --prefix=backend HEAD`:main --force
 
     - name: ⏳ Wait for Backend to Start
       run: |
@@ -142,14 +150,22 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: 🏗️ Build and Deploy Frontend
-      uses: akhileshns/heroku-deploy@v3.13.15
-      with:
-        heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-        heroku_app_name: "ai-story-book-frontend"
-        heroku_email: ${{ secrets.HEROKU_EMAIL }}
-        appdir: "frontend"
-        buildpack: "https://github.com/heroku/heroku-buildpack-nodejs.git"
+    - name: 📦 Install Heroku CLI
+      run: |
+        curl https://cli-assets.heroku.com/install-ubuntu.sh | sh
+        heroku --version
+
+    - name: 🔐 Login to Heroku
+      run: |
+        echo "${{ secrets.HEROKU_API_KEY }}" | heroku auth:token
+        heroku auth:whoami
+
+    - name: 🏗️ Deploy Frontend to Heroku
+      run: |
+        git config user.email "action@github.com"
+        git config user.name "GitHub Actions"
+        git remote add heroku-frontend https://heroku:${{ secrets.HEROKU_API_KEY }}@git.heroku.com/ai-story-book-frontend.git
+        git subtree push --prefix=frontend heroku-frontend main || git push heroku-frontend `git subtree split --prefix=frontend HEAD`:main --force
 
     - name: ⏳ Wait for Frontend to Start
       run: |
