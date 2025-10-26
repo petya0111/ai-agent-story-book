@@ -1,0 +1,23 @@
+{
+  "name": "book-agent-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3000",
+    "build": "next build",
+    "start": "next start -p 3000",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "13.5.4",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "swr": "^2.2.0"
+  },
+  "devDependencies": {
+    "typescript": "5.3.3",
+    "@types/react": "18.2.21",
+    "@types/node": "20.4.2",
+    "sass": "^1.70.0"
+  }
+}

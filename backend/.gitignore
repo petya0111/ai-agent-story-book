@@ -1,0 +1,11 @@
+# keep local environment files out of git
+.env
+.env.local
+.env.*.local
+
+# other defaults (add these along with your project's existing .gitignore)
+.gradle/
+build/
+out/
+*.log
+.DS_Store

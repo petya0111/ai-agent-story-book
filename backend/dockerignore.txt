@@ -1,0 +1,7 @@
+build/
+.gradle/
+out/
+.gradle/
+.gradle-cache/
+**/*.log
+.DS_Store

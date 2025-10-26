@@ -1,0 +1,15 @@
+# local envs
+.env
+.env.local
+.env.*.local
+
+# backend build
+backend/build/
+backend/.gradle/
+backend/out/
+*.log
+.DS_Store
+
+# frontend
+frontend/node_modules/
+frontend/.next/
