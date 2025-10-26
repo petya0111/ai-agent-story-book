@@ -121,8 +121,24 @@ jobs:
       run: |
         git config user.email "action@github.com"
         git config user.name "GitHub Actions"
+        
+        # Create a temporary branch with only backend files at root level
+        git checkout -b temp-backend-deploy
+        git rm -rf .
+        git checkout HEAD~1 -- backend/
+        mv backend/* .
+        mv backend/.[^.]* . 2>/dev/null || true
+        rmdir backend
+        git add .
+        git commit -m "Prepare backend for deployment"
+        
+        # Push to Heroku
         git remote add heroku-backend https://heroku:${{ secrets.HEROKU_API_KEY }}@git.heroku.com/ai-story-book-backend.git
-        git subtree push --prefix=backend heroku-backend main || git push heroku-backend `git subtree split --prefix=backend HEAD`:main --force
+        git push heroku-backend temp-backend-deploy:main --force
+        
+        # Return to main branch and cleanup
+        git checkout main
+        git branch -D temp-backend-deploy
 
     - name: 🔧 Configure Backend Environment
       run: |
@@ -171,8 +187,24 @@ jobs:
       run: |
         git config user.email "action@github.com"
         git config user.name "GitHub Actions"
+        
+        # Create a temporary branch with only frontend files at root level
+        git checkout -b temp-frontend-deploy
+        git rm -rf .
+        git checkout HEAD~1 -- frontend/
+        mv frontend/* .
+        mv frontend/.[^.]* . 2>/dev/null || true
+        rmdir frontend
+        git add .
+        git commit -m "Prepare frontend for deployment"
+        
+        # Push to Heroku
         git remote add heroku-frontend https://heroku:${{ secrets.HEROKU_API_KEY }}@git.heroku.com/ai-story-book-frontend.git
-        git subtree push --prefix=frontend heroku-frontend main || git push heroku-frontend `git subtree split --prefix=frontend HEAD`:main --force
+        git push heroku-frontend temp-frontend-deploy:main --force
+        
+        # Return to main branch and cleanup
+        git checkout main
+        git branch -D temp-frontend-deploy
 
     - name: ⏳ Wait for Frontend to Start
       run: |
