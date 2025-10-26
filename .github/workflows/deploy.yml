@@ -64,26 +64,21 @@ jobs:
 
     - name: 🚀 Deploy Backend to Heroku
       run: |
+        # Create a clean directory with backend files at root level
+        mkdir -p /tmp/backend-deploy
+        cp -r backend/* /tmp/backend-deploy/
+        cp backend/.* /tmp/backend-deploy/ 2>/dev/null || true
+        
+        cd /tmp/backend-deploy
+        git init
         git config user.email "action@github.com"
         git config user.name "GitHub Actions"
-        
-        # Create a temporary branch with only backend files at root level
-        git checkout -b temp-backend-deploy
-        git rm -rf .
-        git checkout HEAD~1 -- backend/
-        mv backend/* .
-        mv backend/.[^.]* . 2>/dev/null || true
-        rmdir backend
         git add .
-        git commit -m "Prepare backend for deployment"
+        git commit -m "Deploy backend"
         
         # Push to Heroku
-        git remote add heroku-backend https://heroku:${{ secrets.HEROKU_API_KEY }}@git.heroku.com/ai-story-book-backend.git
-        git push heroku-backend temp-backend-deploy:main --force
-        
-        # Return to main branch and cleanup
-        git checkout main
-        git branch -D temp-backend-deploy
+        git remote add heroku https://heroku:${{ secrets.HEROKU_API_KEY }}@git.heroku.com/ai-story-book-backend.git
+        git push heroku main --force
 
     - name: 🔧 Configure Backend Environment
       run: |
@@ -136,26 +131,21 @@ jobs:
 
     - name: 🚀 Deploy Frontend to Heroku
       run: |
+        # Create a clean directory with frontend files at root level
+        mkdir -p /tmp/frontend-deploy
+        cp -r frontend/* /tmp/frontend-deploy/
+        cp frontend/.* /tmp/frontend-deploy/ 2>/dev/null || true
+        
+        cd /tmp/frontend-deploy
+        git init
         git config user.email "action@github.com"
         git config user.name "GitHub Actions"
-        
-        # Create a temporary branch with only frontend files at root level
-        git checkout -b temp-frontend-deploy
-        git rm -rf .
-        git checkout HEAD~1 -- frontend/
-        mv frontend/* .
-        mv frontend/.[^.]* . 2>/dev/null || true
-        rmdir frontend
         git add .
-        git commit -m "Prepare frontend for deployment"
+        git commit -m "Deploy frontend"
         
         # Push to Heroku
-        git remote add heroku-frontend https://heroku:${{ secrets.HEROKU_API_KEY }}@git.heroku.com/ai-story-book-frontend.git
-        git push heroku-frontend temp-frontend-deploy:main --force
-        
-        # Return to main branch and cleanup
-        git checkout main
-        git branch -D temp-frontend-deploy
+        git remote add heroku https://heroku:${{ secrets.HEROKU_API_KEY }}@git.heroku.com/ai-story-book-frontend.git
+        git push heroku main --force
 
   notify:
     name: Notify Deployment Status
