@@ -29,3 +29,9 @@ data class SaveStoryRequest(
     val parentVersionId: Long? = null,
     val metadata: Map<String, Any>? = null
 )
+
+data class ChatRequest(
+    val bookId: Long? = null,
+    val chunkIds: List<Long>? = null,
+    val message: String
+)

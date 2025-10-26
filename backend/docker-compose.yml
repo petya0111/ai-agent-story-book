@@ -30,6 +30,9 @@ services:
       DB_USER: postgres
       DB_PASSWORD: postgres
       SPRING_PROFILES_ACTIVE: docker
+      OPENAI_API_KEY: "${OPENAI_API_KEY}"
+    env_file:
+      - .env
     ports:
       - "8080:8080"
     restart: unless-stopped

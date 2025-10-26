@@ -6,6 +6,12 @@ export async function fetchBookMetadata() {
   return res.json();
 }
 
+export async function fetchBookDetails(bookId: number) {
+  const res = await fetch(`${API_BASE}/book/${bookId}`);
+  if (!res.ok) throw new Error("Failed to load book details");
+  return res.json();
+}
+
 export async function fetchPages(bookId: number, start: number, end: number) {
   const res = await fetch(`${API_BASE}/book/pages?bookId=${bookId}&start=${start}&end=${end}`);
   if (!res.ok) throw new Error("Failed to load pages");
@@ -23,6 +29,16 @@ export async function generateHeroRewrite(payload: any) {
 
 export async function saveStory(payload: any) {
   const res = await fetch(`${API_BASE}/stories`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+  return res.json();
+}
+
+// New: chat helper
+export async function chatWithBook(payload: any) {
+  const res = await fetch(`${API_BASE}/generate/chat`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload)

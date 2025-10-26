@@ -24,7 +24,9 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.flywaydb:flyway-core")
     implementation("org.springframework.boot:spring-boot-starter-validation")
-    implementation("org.springframework.boot:spring-boot-starter-webflux") // for WebClient if needed
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
+    // PDF extraction dependency
+    implementation("org.apache.pdfbox:pdfbox:2.0.28")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
