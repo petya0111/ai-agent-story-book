@@ -35,6 +35,9 @@ services:
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
       APP_PORT: ${APP_PORT}
       OPENAI_API_KEY: ${OPENAI_API_KEY}
+      BOOK_PDF_PATH: ${BOOK_PDF_PATH}
+    volumes:
+      - ./backend/books:/app/books
     ports:
       - "${APP_PORT}:8080"
     restart: unless-stopped

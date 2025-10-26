@@ -31,6 +31,7 @@ services:
       DB_PASSWORD: postgres
       SPRING_PROFILES_ACTIVE: docker
       OPENAI_API_KEY: "${OPENAI_API_KEY}"
+      BOOK_PDF_PATH: "books/napoleon-hill-think-and-grow-rich.pdf"
     env_file:
       - .env
     ports:
