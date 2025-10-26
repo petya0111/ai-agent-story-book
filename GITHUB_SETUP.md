@@ -20,7 +20,12 @@
 
 ### Secret 2: HEROKU_EMAIL  
 - **Name**: `HEROKU_EMAIL`
-- **Value**: `pmarinova0111@gmail.com` (your Heroku login email)
+- **Value**: Your Heroku account email
+
+### Secret 3: OPENAI_API_KEY (Optional but Recommended)
+- **Name**: `OPENAI_API_KEY`
+- **Value**: Your OpenAI API key (for story generation features)
+- **Note**: This enables the AI story generation functionality in your deployed app
 
 ## Step 3: Test One-Button Deploy 🚀
 

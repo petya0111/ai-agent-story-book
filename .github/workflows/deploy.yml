@@ -21,6 +21,7 @@ on:
 env:
   HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
   HEROKU_EMAIL: ${{ secrets.HEROKU_EMAIL }}
+  OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
 jobs:
   deploy-backend:
@@ -67,6 +68,12 @@ jobs:
         git config user.name "GitHub Actions"
         git remote add heroku-backend https://heroku:${{ secrets.HEROKU_API_KEY }}@git.heroku.com/ai-story-book-backend.git
         git subtree push --prefix=backend heroku-backend main || git push heroku-backend `git subtree split --prefix=backend HEAD`:main --force
+
+    - name: 🔧 Configure Backend Environment
+      run: |
+        if [ ! -z "${{ secrets.OPENAI_API_KEY }}" ]; then
+          heroku config:set OPENAI_API_KEY="${{ secrets.OPENAI_API_KEY }}" -a ai-story-book-backend
+        fi
 
   deploy-frontend:
     name: Deploy Frontend
