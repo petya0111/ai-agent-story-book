@@ -86,6 +86,7 @@ jobs:
         if [ ! -z "${{ secrets.OPENAI_API_KEY }}" ]; then
           heroku config:set OPENAI_API_KEY="${{ secrets.OPENAI_API_KEY }}" -a ai-story-book-backend
         fi
+        heroku config:set BOOK_PDF_PATH="books/napoleon-hill-think-and-grow-rich.pdf" -a ai-story-book-backend
 
   deploy-frontend:
     name: Deploy Frontend
