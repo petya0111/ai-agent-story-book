@@ -1,0 +1,211 @@
+name: Manual Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - staging
+      deploy_target:
+        description: 'What to deploy'
+        required: true
+        default: 'both'
+        type: choice
+        options:
+          - both
+          - backend-only
+          - frontend-only
+      force_deploy:
+        description: 'Force deploy (skip tests)'
+        required: false
+        default: false
+        type: boolean
+
+env:
+  HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+  HEROKU_EMAIL: ${{ secrets.HEROKU_EMAIL }}
+
+jobs:
+  deploy-info:
+    name: 📋 Deployment Information
+    runs-on: ubuntu-latest
+    steps:
+    - name: 📋 Show Deployment Details
+      run: |
+        echo "🚀 Manual Deployment Triggered"
+        echo "📍 Environment: ${{ github.event.inputs.environment }}"
+        echo "🎯 Target: ${{ github.event.inputs.deploy_target }}"
+        echo "⚡ Force Deploy: ${{ github.event.inputs.force_deploy }}"
+        echo "👤 Triggered by: ${{ github.actor }}"
+        echo "📝 Commit: ${{ github.sha }}"
+
+  test-backend:
+    name: 🧪 Test Backend
+    runs-on: ubuntu-latest
+    if: (contains(github.event.inputs.deploy_target, 'backend') || github.event.inputs.deploy_target == 'both') && github.event.inputs.force_deploy == 'false'
+    
+    steps:
+    - name: 🚀 Checkout code
+      uses: actions/checkout@v4
+
+    - name: 📦 Setup Java 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: 🔧 Setup Gradle
+      uses: gradle/gradle-build-action@v2
+
+    - name: ✅ Run Backend Tests
+      working-directory: ./backend
+      run: ./gradlew test
+
+  test-frontend:
+    name: 🧪 Test Frontend  
+    runs-on: ubuntu-latest
+    if: (contains(github.event.inputs.deploy_target, 'frontend') || github.event.inputs.deploy_target == 'both') && github.event.inputs.force_deploy == 'false'
+    
+    steps:
+    - name: 🚀 Checkout code
+      uses: actions/checkout@v4
+
+    - name: 📦 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: frontend/package-lock.json
+
+    - name: 📥 Install Dependencies
+      working-directory: ./frontend
+      run: npm ci
+
+    - name: 🔍 Lint Code
+      working-directory: ./frontend
+      run: npm run lint
+
+    - name: 🏗️ Test Build
+      working-directory: ./frontend
+      run: npm run build
+
+  deploy-backend:
+    name: 🚀 Deploy Backend
+    runs-on: ubuntu-latest
+    needs: [test-backend]
+    if: always() && (contains(github.event.inputs.deploy_target, 'backend') || github.event.inputs.deploy_target == 'both') && (needs.test-backend.result == 'success' || needs.test-backend.result == 'skipped')
+    
+    steps:
+    - name: 🚀 Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: 🏗️ Build and Deploy Backend
+      uses: akhileshns/heroku-deploy@v3.13.15
+      with:
+        heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+        heroku_app_name: "ai-story-book-backend"
+        heroku_email: ${{ secrets.HEROKU_EMAIL }}
+        appdir: "backend"
+        buildpack: "https://github.com/heroku/heroku-buildpack-gradle.git"
+
+    - name: ⏳ Wait for Backend to Start
+      run: |
+        echo "Waiting for backend to start..."
+        sleep 30
+        
+    - name: 🔍 Health Check Backend
+      run: |
+        response=$(curl -s -o /dev/null -w "%{http_code}" https://ai-story-book-backend-366deb5178f1.herokuapp.com/api/book/metadata)
+        if [ $response -eq 200 ]; then
+          echo "✅ Backend health check passed"
+        else
+          echo "❌ Backend health check failed with status: $response"
+          exit 1
+        fi
+
+  deploy-frontend:
+    name: 🚀 Deploy Frontend
+    runs-on: ubuntu-latest
+    needs: [test-frontend, deploy-backend]
+    if: always() && (contains(github.event.inputs.deploy_target, 'frontend') || github.event.inputs.deploy_target == 'both') && (needs.test-frontend.result == 'success' || needs.test-frontend.result == 'skipped') && (needs.deploy-backend.result == 'success' || needs.deploy-backend.result == 'skipped')
+    
+    steps:
+    - name: 🚀 Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: 🏗️ Build and Deploy Frontend
+      uses: akhileshns/heroku-deploy@v3.13.15
+      with:
+        heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+        heroku_app_name: "ai-story-book-frontend"
+        heroku_email: ${{ secrets.HEROKU_EMAIL }}
+        appdir: "frontend"
+        buildpack: "https://github.com/heroku/heroku-buildpack-nodejs.git"
+
+    - name: ⏳ Wait for Frontend to Start
+      run: |
+        echo "Waiting for frontend to start..."
+        sleep 30
+        
+    - name: 🔍 Health Check Frontend
+      run: |
+        response=$(curl -s -o /dev/null -w "%{http_code}" https://ai-story-book-frontend-543348ab1276.herokuapp.com)
+        if [ $response -eq 200 ]; then
+          echo "✅ Frontend health check passed"
+        else
+          echo "❌ Frontend health check failed with status: $response"
+          exit 1
+        fi
+
+  deployment-summary:
+    name: 📊 Deployment Summary
+    runs-on: ubuntu-latest
+    needs: [deploy-backend, deploy-frontend]
+    if: always()
+    
+    steps:
+    - name: 📊 Generate Summary
+      run: |
+        echo "# 🚀 Deployment Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**Environment:** ${{ github.event.inputs.environment }}" >> $GITHUB_STEP_SUMMARY
+        echo "**Target:** ${{ github.event.inputs.deploy_target }}" >> $GITHUB_STEP_SUMMARY
+        echo "**Triggered by:** ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+        echo "**Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        if [ "${{ needs.deploy-backend.result }}" == "success" ] || [ "${{ needs.deploy-backend.result }}" == "skipped" ]; then
+          echo "✅ **Backend:** Deployed successfully" >> $GITHUB_STEP_SUMMARY
+          echo "🔗 [Backend URL](https://ai-story-book-backend-366deb5178f1.herokuapp.com)" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "❌ **Backend:** Deployment failed" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        if [ "${{ needs.deploy-frontend.result }}" == "success" ] || [ "${{ needs.deploy-frontend.result }}" == "skipped" ]; then
+          echo "✅ **Frontend:** Deployed successfully" >> $GITHUB_STEP_SUMMARY
+          echo "🔗 [Frontend URL](https://ai-story-book-frontend-543348ab1276.herokuapp.com)" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "❌ **Frontend:** Deployment failed" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+    - name: 🎉 Success Notification
+      if: (needs.deploy-backend.result == 'success' || needs.deploy-backend.result == 'skipped') && (needs.deploy-frontend.result == 'success' || needs.deploy-frontend.result == 'skipped')
+      run: |
+        echo "🎉 Deployment completed successfully!"
+        echo "🌐 Your AI Story Book is live!"
+        
+    - name: ❌ Failure Notification
+      if: needs.deploy-backend.result == 'failure' || needs.deploy-frontend.result == 'failure'
+      run: |
+        echo "❌ Deployment failed!"
+        echo "Check the logs above for details."
+        exit 1
