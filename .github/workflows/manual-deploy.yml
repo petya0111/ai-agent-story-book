@@ -128,6 +128,7 @@ jobs:
         git init
         git config user.email "action@github.com"
         git config user.name "GitHub Actions"
+        git checkout -b main
         git add .
         git commit -m "Deploy backend"
         
@@ -189,6 +190,7 @@ jobs:
         git init
         git config user.email "action@github.com"
         git config user.name "GitHub Actions"
+        git checkout -b main
         git add .
         git commit -m "Deploy frontend"
         
