@@ -75,7 +75,7 @@ class GenerateController(
                 val chunks = chunkRepo.findAllById(req.chunkIds)
                 chunks.joinToString("\n\n") { it.text }
             }
-            req.bookId != null -> {
+            (req.bookId != null) -> {
                 // Optionally include first few pages as context for a book-level chat (simple approach)
                 val chunks = chunkRepo.findAllByBookId(req.bookId).sortedBy { it.pageNumber }.take(3)
                 chunks.joinToString("\n\n") { it.text }
