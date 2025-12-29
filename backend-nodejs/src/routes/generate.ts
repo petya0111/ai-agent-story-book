@@ -35,7 +35,7 @@ router.post("/hero-rewrite", async (req, res) => {
       where: { id: { in: chunkIds } },
       orderBy: { pageNumber: "asc" }
     });
-    const chunkText = chunks.map((c) => c.text).join("\n\n");
+    const chunkText = chunks.map((c: { text: string }) => c.text).join("\n\n");
 
     // Build prompt
     const systemPrompt =
