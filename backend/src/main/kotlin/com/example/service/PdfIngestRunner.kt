@@ -39,9 +39,10 @@ class PdfIngestRunner(
         }
 
         log.info("Starting PDF ingestion from: $pdfPath")
-        PDDocument.load(file).use { document ->
+        val document = PDDocument.load(file)
+        document.use {
             val stripper = PDFTextStripper()
-            val numPages = document.getNumberOfPages()
+            val numPages = document.numberOfPages
             val book = Book(
                 title = file.nameWithoutExtension,
                 author = null,
