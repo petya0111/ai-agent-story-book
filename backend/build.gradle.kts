@@ -54,3 +54,8 @@ tasks.withType<org.springframework.boot.gradle.tasks.bundling.BootJar> {
 tasks.withType<Jar> {
     enabled = false
 }
+
+// Heroku requires a 'stage' task
+tasks.register("stage") {
+    dependsOn("bootJar")
+}
