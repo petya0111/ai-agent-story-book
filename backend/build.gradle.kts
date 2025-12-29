@@ -42,10 +42,6 @@ dependencies {
     testImplementation(kotlin("test"))
 }
 
-application {
-    mainClass.set("com.example.BookAgentApplicationKt")
-}
-
 kotlin {
     jvmToolchain(21)
 }
