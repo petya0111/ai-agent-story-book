@@ -25,8 +25,10 @@ import io.ktor.serialization.kotlinx.json.*
 import java.time.Duration
 
 fun main() {
-    // Read port from env (container-friendly). Default 8080.
-    val port = System.getenv("SERVER_PORT")?.toIntOrNull() ?: 8080
+    // Read port from env (Heroku uses PORT, fallback to SERVER_PORT for local dev)
+    val port = System.getenv("PORT")?.toIntOrNull() 
+        ?: System.getenv("SERVER_PORT")?.toIntOrNull() 
+        ?: 8080
     embeddedServer(Netty, port = port, module = Application::module).start(wait = true)
 }
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Viseme } from "../types/avatar";
+import { Viseme } from "../src/types/avatar";
 import emotionsManifest from "../../public/manifest/emotions.json";
 import layeringManifest from "../../public/manifest/layering.json";
 
