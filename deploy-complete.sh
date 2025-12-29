@@ -56,15 +56,19 @@ heroku create $BACKEND_APP || {
 echo "🗄️ Adding PostgreSQL database..."
 heroku addons:create heroku-postgresql:essential-0 --app $BACKEND_APP || echo "Database addon might already exist"
 
-# Ask for OpenAI API key
+# Ask for OpenAI API key and book PDF path
 echo "🔑 Please enter your OpenAI API Key:"
 read -s OPENAI_KEY
+
+echo "📚 Please enter the book PDF path (e.g., books/hale-sample-story.pdf):"
+read BOOK_PDF_PATH
 
 # Set environment variables for backend
 echo "⚙️ Setting backend environment variables..."
 heroku config:set \
     NODE_ENV=production \
     OPENAI_API_KEY="$OPENAI_KEY" \
+    BOOK_PDF_PATH="$BOOK_PDF_PATH" \
     --app $BACKEND_APP
 
 # Deploy backend using git subtree
