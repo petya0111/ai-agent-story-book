@@ -5,6 +5,7 @@ import com.example.model.Chunk
 import com.example.repository.BookRepository
 import com.example.repository.ChunkRepository
 import jakarta.transaction.Transactional
+import org.apache.pdfbox.Loader
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.text.PDFTextStripper
 import org.slf4j.LoggerFactory
@@ -39,7 +40,7 @@ class PdfIngestRunner(
         }
 
         log.info("Starting PDF ingestion from: $pdfPath")
-        val document = PDDocument.load(file)
+        val document = Loader.loadPDF(file)
         document.use {
             val stripper = PDFTextStripper()
             val numPages = document.numberOfPages
