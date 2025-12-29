@@ -75,4 +75,51 @@ router.post("/hero-rewrite", async (req, res) => {
   }
 });
 
+// POST /api/generate/chat
+router.post("/chat", async (req, res) => {
+  try {
+    const { message, bookId } = req.body;
+
+    if (!message) {
+      return res.status(400).json({ error: "message is required" });
+    }
+
+    if (!openaiApiKey) {
+      return res.status(500).json({ error: "OpenAI API key not configured" });
+    }
+
+    // Get some book context if bookId is provided
+    let context = "";
+    if (bookId) {
+      const chunks = await prisma.chunk.findMany({
+        where: { bookId },
+        take: 3,
+        orderBy: { pageNumber: "asc" }
+      });
+      context = chunks.map(c => c.text).join("\n\n");
+    }
+
+    const systemMessage = context 
+      ? `You are a helpful assistant discussing this story content:\n\n${context}\n\nAnswer questions about the story and engage in conversation about its themes, characters, and plot.`
+      : "You are a helpful assistant for discussing stories and literature.";
+
+    const response = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [
+        { role: "system", content: systemMessage },
+        { role: "user", content: message }
+      ],
+      max_tokens: 500,
+      temperature: 0.7
+    });
+
+    const reply = response.choices[0]?.message?.content || "I'm sorry, I couldn't generate a response.";
+    
+    res.json({ reply });
+  } catch (err) {
+    console.error("chat error", err);
+    res.status(500).json({ error: "Chat failed", details: String(err) });
+  }
+});
+
 export default router;

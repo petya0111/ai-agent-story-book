@@ -38,4 +38,18 @@ router.get("/chunk/:id", async (req, res) => {
   res.json(chunk);
 });
 
+// GET /api/book/:id
+router.get("/:id", async (req, res) => {
+  const id = Number(req.params.id);
+  const book = await prisma.book.findUnique({ where: { id } });
+  if (!book) return res.status(404).json({ error: "Book not found" });
+  const chunkCount = await prisma.chunk.count({ where: { bookId: book.id } });
+  res.json({
+    id: book.id,
+    title: book.title,
+    pages: book.pages,
+    chunkCount
+  });
+});
+
 export default router;
