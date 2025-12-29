@@ -1,4 +1,4 @@
-package com.example.bookagent.dto
+package com.example.dto
 
 import jakarta.validation.constraints.NotEmpty
 import jakarta.validation.constraints.NotNull

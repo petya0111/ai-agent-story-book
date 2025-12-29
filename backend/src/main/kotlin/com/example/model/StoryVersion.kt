@@ -1,4 +1,4 @@
-package com.example.bookagent.model
+package com.example.model
 
 import jakarta.persistence.*
 import java.time.Instant

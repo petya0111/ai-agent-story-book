@@ -18,6 +18,7 @@ val serializationVersion = "1.7.1"
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -30,6 +31,7 @@ dependencies {
     // JSON Serialization
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
     // HTTP Client
     implementation("com.squareup.okhttp3:okhttp:$okhttpVersion")

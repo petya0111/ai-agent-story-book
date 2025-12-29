@@ -1,4 +1,4 @@
-package com.example.config
+package com.example
 
 data class Env(val openAiApiKey: String?) {
     companion object {

@@ -1,8 +1,8 @@
-package com.example.bookagent.controller
+package com.example.controller
 
-import com.example.bookagent.model.StoryVersion
-import com.example.bookagent.dto.SaveStoryRequest
-import com.example.bookagent.repository.StoryVersionRepository
+import com.example.model.StoryVersion
+import com.example.dto.SaveStoryRequest
+import com.example.repository.StoryVersionRepository
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*

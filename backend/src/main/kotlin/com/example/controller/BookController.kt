@@ -1,9 +1,9 @@
-package com.example.bookagent.controller
+package com.example.controller
 
-import com.example.bookagent.model.Book
-import com.example.bookagent.model.Chunk
-import com.example.bookagent.repository.BookRepository
-import com.example.bookagent.repository.ChunkRepository
+import com.example.model.Book
+import com.example.model.Chunk
+import com.example.repository.BookRepository
+import com.example.repository.ChunkRepository
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 

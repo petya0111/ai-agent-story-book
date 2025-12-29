@@ -1,6 +1,6 @@
-package com.example.bookagent.repository
+package com.example.repository
 
-import com.example.bookagent.model.StoryVersion
+import com.example.model.StoryVersion
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 

@@ -1,8 +1,8 @@
-package com.example.bookagent.controller
+package com.example.controller
 
-import com.example.bookagent.dto.ChatRequest
-import com.example.bookagent.dto.GenerateRequest
-import com.example.bookagent.repository.ChunkRepository
+import com.example.dto.ChatRequest
+import com.example.dto.GenerateRequest
+import com.example.repository.ChunkRepository
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
