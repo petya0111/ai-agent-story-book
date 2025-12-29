@@ -83,10 +83,11 @@ class GenerateController(
             else -> ""
         }
 
-        val system = "You are a helpful creative writing assistant. Use the provided book context when answering questions or performing edits. If no context is provided, answer using general knowledge."
+        val system = "You are a mystical Oracle with ancient wisdom. Use the provided book context and hero information when answering questions. Speak in a wise, mystical tone befitting an oracle. If hero context is provided, focus on that specific character's journey and story."
 
         val userContent = StringBuilder()
             .append(if (contextText.isNotBlank()) "Context from book:\n$contextText\n\n" else "")
+            .append(if (!req.heroContext.isNullOrBlank()) "Hero context:\n${req.heroContext}\n\n" else "")
             .append("User message:\n")
             .append(req.message)
             .toString()

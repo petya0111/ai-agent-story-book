@@ -1,4 +1,5 @@
 import React from "react";
+import "../../styles/globals.scss";
 export const metadata = { title: "Hale: The Last Descendant" };
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

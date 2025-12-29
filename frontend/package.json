@@ -1,28 +1,22 @@
 {
-  "name": "book-agent-frontend",
-  "version": "0.1.0",
+  "name": "fantasy-avatar-frontend",
   "private": true,
   "scripts": {
     "dev": "next dev -p 3000",
     "build": "next build",
-    "start": "next start -p $PORT",
-    "lint": "next lint",
-    "heroku-postbuild": "npm run build"
+    "start": "next start",
+    "lint": "next lint"
   },
   "dependencies": {
-    "next": "13.5.4",
+    "next": "14.2.3",
     "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "react-markdown": "^8.0.7",
-    "rehype-sanitize": "^5.0.1",
-    "remark-gfm": "^3.0.1",
-    "supports-color": "^10.2.2",
-    "swr": "^2.2.0"
+    "react-dom": "18.2.0"
   },
   "devDependencies": {
-    "@types/node": "20.4.2",
+    "@types/node": "20.8.10",
     "@types/react": "18.2.21",
-    "sass": "^1.70.0",
-    "typescript": "5.3.3"
+    "typescript": "5.4.5",
+    "eslint": "8.57.0",
+    "eslint-config-next": "14.2.3"
   }
 }

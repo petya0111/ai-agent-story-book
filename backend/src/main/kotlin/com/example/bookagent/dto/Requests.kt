@@ -33,5 +33,6 @@ data class SaveStoryRequest(
 data class ChatRequest(
     val bookId: Long? = null,
     val chunkIds: List<Long>? = null,
-    val message: String
+    val message: String,
+    val heroContext: String? = null
 )

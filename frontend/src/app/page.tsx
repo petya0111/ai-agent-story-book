@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
+import { useRouter } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeSanitize from "rehype-sanitize";
@@ -31,6 +32,7 @@ export default function HomePage() {
   const [history, setHistory] = useState<QAHistoryItem[]>([]);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     try {
@@ -186,17 +188,20 @@ export default function HomePage() {
                     explore forgotten chronicles, and uncover the secrets of the last descendant of Regalis.
                   </p>
                   <div className="welcome-features">
-                    <div className="feature">
+                    <div className="feature" onClick={() => router.push('/chronicles')}>
                       <span className="feature-icon">📚</span>
                       <span className="feature-text">Ancient Chronicles</span>
+                      <span className="feature-desc">Explore the sacred library</span>
                     </div>
-                    <div className="feature">
+                    <div className="feature" onClick={() => router.push('/oracle')}>
                       <span className="feature-icon">🔮</span>
                       <span className="feature-text">Oracle's Wisdom</span>
+                      <span className="feature-desc">Seek mystical guidance</span>
                     </div>
-                    <div className="feature">
+                    <div className="feature" onClick={() => router.push('/tales')}>
                       <span className="feature-icon">⚔️</span>
                       <span className="feature-text">Heroic Tales</span>
+                      <span className="feature-desc">Forge legendary heroes</span>
                     </div>
                   </div>
                 </div>
