@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -23,7 +23,7 @@ type Book = {
 
 const ORACLE_MESSAGES_KEY = "oracle_messages_v1";
 
-export default function OraclePage() {
+function OracleContent() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -362,5 +362,13 @@ The tapestry of fate has brought this hero to my realm. What visions do you seek
         </div>
       </div>
     </>
+  );
+}
+
+export default function OraclePage() {
+  return (
+    <Suspense fallback={<div>Loading Oracle...</div>}>
+      <OracleContent />
+    </Suspense>
   );
 }
