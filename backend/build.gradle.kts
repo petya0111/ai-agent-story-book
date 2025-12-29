@@ -43,7 +43,7 @@ dependencies {
 }
 
 kotlin {
-    jvmToolchain(21)
+    jvmToolchain(17)
 }
 
 tasks.withType<org.springframework.boot.gradle.tasks.bundling.BootJar> {
