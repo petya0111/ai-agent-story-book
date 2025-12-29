@@ -1,42 +1,17 @@
 services:
-  db:
-    image: postgres:15
-    restart: unless-stopped
-    environment:
-      POSTGRES_DB: bookdb
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d bookdb"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  app:
+  backend:
     build:
-      context: .
+      context: ./backend
       dockerfile: Dockerfile
-    depends_on:
-      db:
-        condition: service_healthy
+    container_name: fantasy-rag-backend
     environment:
-      DB_HOST: db
-      DB_PORT: "5432"
-      DB_NAME: bookdb
-      DB_USER: postgres
-      DB_PASSWORD: postgres
-      SPRING_PROFILES_ACTIVE: docker
-      OPENAI_API_KEY: "${OPENAI_API_KEY}"
-      BOOK_PDF_PATH: "books/napoleon-hill-think-and-grow-rich.pdf"
-    env_file:
-      - .env
+      # Map port if you want to change it inside container
+      - SERVER_PORT=8080
+      # Optional OpenAI integration
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
     ports:
       - "8080:8080"
+    volumes:
+      # Persist uploads done via /uploadPdf
+      - ./backend/data/uploads:/app/data/uploads
     restart: unless-stopped
-
-volumes:
-  pgdata:

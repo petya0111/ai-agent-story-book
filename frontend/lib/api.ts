@@ -36,12 +36,23 @@ export async function saveStory(payload: any) {
   return res.json();
 }
 
-// New: chat helper
+// Chat with book using the available story context
 export async function chatWithBook(payload: any) {
+  // Always include the Hale story book ID for context
+  const chatPayload = {
+    ...payload,
+    bookId: 2 // The ID of the ingested Hale story
+  };
+  
   const res = await fetch(`${API_BASE}/generate/chat`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload)
+    body: JSON.stringify(chatPayload)
   });
+  
+  if (!res.ok) {
+    throw new Error(`HTTP error! status: ${res.status}`);
+  }
+  
   return res.json();
 }

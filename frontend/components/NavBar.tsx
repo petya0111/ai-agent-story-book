@@ -1,16 +1,16 @@
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 import React from "react";
 
 const navItems = [
-  { href: "/", label: "Chat", id: "chat" },
-  { href: "/library", label: "Library", id: "library" },
-  { href: "/versions", label: "Versions", id: "versions" },
-  { href: "/settings", label: "Settings", id: "settings" },
+  { href: "/", label: "Chronicle", id: "chat" },
+  { href: "/library", label: "Codex", id: "library" },
+  { href: "/versions", label: "Prophecies", id: "versions" },
+  { href: "/settings", label: "Scrolls", id: "settings" },
 ];
 
 export default function NavBar() {
-  const router = useRouter();
+  const pathname = usePathname();
 
   return (
     <nav className="app-nav" role="navigation" aria-label="Main navigation">
@@ -19,16 +19,16 @@ export default function NavBar() {
           <Link href="/" legacyBehavior>
             <a className="brand-link" aria-label="Home">
               <span className="brand-logo" aria-hidden>
-                📚
+                ⚔️
               </span>
-              <span className="brand-text">Book Agent</span>
+              <span className="brand-text">Hale's Legacy</span>
             </a>
           </Link>
         </div>
 
         <div className="nav-items" role="menubar">
           {navItems.map((item) => {
-            const active = router.pathname === item.href;
+            const active = pathname === item.href;
             return (
               <Link key={item.id} href={item.href} legacyBehavior>
                 <a
@@ -44,16 +44,15 @@ export default function NavBar() {
         </div>
 
         <div className="nav-actions">
-          <button
-            type="button"
-            className="nav-btn"
-            title="New conversation"
-            onClick={() => {
-              router.push("/");
-            }}
-          >
-            New
-          </button>
+          <Link href="/">
+            <button
+              type="button"
+              className="nav-btn"
+              title="New quest"
+            >
+              New Quest
+            </button>
+          </Link>
         </div>
       </div>
     </nav>

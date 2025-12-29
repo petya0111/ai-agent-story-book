@@ -1,0 +1,9 @@
+{
+  "emotions": {
+    "neutral": { "brows": "brows_neutral", "eyes": "eye_open", "mouthBias": "REST" },
+    "curious": { "brows": "brows_raise", "eyes": "eye_focus" },
+    "happy": { "brows": "brows_raise", "eyes": "eye_smile", "rimLightBoost": 0.15 },
+    "concerned": { "brows": "brows_furrow", "eyes": "eye_half", "shadowBoost": 0.1 },
+    "surprised": { "brows": "brows_surprise", "eyes": "eye_open" }
+  }
+}

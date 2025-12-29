@@ -1,0 +1,38 @@
+# Multi-stage build for Ktor backend
+# Stage 1: Build
+FROM gradle:8.8-jdk21-alpine AS build
+WORKDIR /workspace
+
+# Copy source
+COPY . .
+
+# Build a runnable distribution (bin + libs)
+RUN gradle --no-daemon clean installDist
+
+# Stage 2: Runtime (slim JRE)
+FROM eclipse-temurin:21-jre-alpine
+
+# Non-root user
+RUN addgroup -S app && adduser -S app -G app
+
+WORKDIR /app
+
+# Copy the built distribution
+COPY --from=build /workspace/build/install/fantasy-rag-backend /app
+
+# Include sample data (for quick testing)
+# This path comes from the repo (backend/data)
+COPY data /app/data
+
+# Container config
+ENV SERVER_PORT=8080
+ENV JAVA_OPTS=""
+
+EXPOSE 8080
+
+# Ensure proper ownership
+RUN chown -R app:app /app
+USER app
+
+# Start the app
+CMD ["/app/bin/fantasy-rag-backend"]

@@ -1,0 +1,17 @@
+# VCS
+.git
+.gitignore
+
+# Build outputs
+build
+out
+
+# Gradle caches (re-downloaded in builder stage)
+.gradle
+
+# OS / Editor cruft
+.DS_Store
+Thumbs.db
+
+# Node modules (if any)
+node_modules

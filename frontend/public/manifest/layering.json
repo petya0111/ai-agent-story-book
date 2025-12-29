@@ -1,0 +1,23 @@
+{
+  "renderOrder": [
+    "assets/fx/rim_light.png",
+    "assets/hair/hair_highlights.png",
+    "assets/hair/hair_front_wisps.png",
+    "assets/hair/hair_mid_strands.png",
+    "assets/base/ear.png",
+    "face/brows/current.png",
+    "face/eyes/current.png",
+    "face/mouth/current.png",
+    "assets/hair/hair_back_mass.png",
+    "assets/clothing/bowtie_left.png",
+    "assets/clothing/bowtie_right.png",
+    "assets/clothing/bowtie_knot.png",
+    "assets/clothing/collar_left.png",
+    "assets/clothing/collar_right.png",
+    "assets/clothing/lapel.png",
+    "assets/shading/shadow_overlay.png",
+    "assets/fx/vignette.png",
+    "assets/base/base_silhouette.png",
+    "assets/fx/background.png"
+  ]
+}

@@ -1,0 +1,10 @@
+body {
+  background: #111;
+  color: #eee;
+  font-family: sans-serif;
+}
+.emotion-happy { filter: saturate(1.2) brightness(1.05); }
+.emotion-curious { filter: contrast(1.08); }
+.emotion-concerned { filter: brightness(0.92); }
+.emotion-surprised { filter: hue-rotate(20deg) brightness(1.05); }
+.emotion-neutral { filter: none; }
