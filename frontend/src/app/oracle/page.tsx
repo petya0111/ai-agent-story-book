@@ -73,16 +73,18 @@ The tapestry of fate has brought this hero to my realm. What visions do you seek
         const saved = JSON.parse(raw);
         setMessages(saved);
       } else {
-        // Create default welcome message
-        const welcomeText = bookTitle 
-          ? `Welcome, seeker. I am the Oracle, keeper of ancient wisdom. I sense you wish to explore the mysteries of "${decodeURIComponent(bookTitle)}". What knowledge do you seek?`
-          : "Welcome, seeker. I am the Oracle, keeper of ancient wisdom. Ask me about any story, character, or mystical knowledge you wish to uncover.";
-        
+        // Create default welcome message tailored to Hale
+        const welcomeText = bookTitle
+          ? `Welcome, seeker. I am the Oracle. You are exploring the chronicle: "${decodeURIComponent(
+              bookTitle
+            )}" — ask me about Hale, the characters, locations, or themes from this book.`
+          : "Welcome, seeker. I am the Oracle. Ask me about Hale: his origin, allies, enemies, key locations, and the major events of his journey.";
+
         const welcomeMsg: Message = {
-          id: 'welcome',
-          role: 'assistant',
+          id: "welcome",
+          role: "assistant",
           text: welcomeText,
-          ts: Date.now()
+          ts: Date.now(),
         };
         setMessages([welcomeMsg]);
       }
@@ -219,33 +221,34 @@ The tapestry of fate has brought this hero to my realm. What visions do you seek
 
   // Dynamic suggested questions based on context
   const getSuggestedQuestions = () => {
+    // Suggested questions focused on the Hale chronicle
     if (heroContext) {
       try {
         const hero = JSON.parse(decodeURIComponent(heroContext));
         return [
           `What challenges will ${hero.heroName} face as a ${hero.heroRole}?`,
-          `How do ${hero.heroName}'s traits influence their destiny?`,
-          `What is the deeper meaning of ${hero.taleTitle}?`,
-          `What lessons can ${hero.heroName} teach us?`,
-          `How does ${hero.heroName}'s story connect to the greater tapestry of fate?`
+          `How do ${hero.heroName}'s traits influence their destiny in the Hale chronicle?`,
+          `What is the deeper meaning of ${hero.taleTitle} in relation to Hale's journey?`,
+          `What lessons can ${hero.heroName} teach readers of Hale's story?`,
+          `How does ${hero.heroName}'s arc intersect with Hale and the major events in the book?`,
         ];
       } catch (e) {
         // Fallback if hero context parsing fails
         return [
           "What is the meaning behind Hale's journey?",
-          "Explain the symbolism of the Path of Thorns",
-          "Who was the old woman in the forest?",
-          "What lessons did Hale learn about leadership?",
-          "Describe the kingdom of Nomed"
+          "Explain the symbolism of the Path of Thorns in the chronicle",
+          "Who are Hale's closest allies and greatest enemies?",
+          "What lessons did Hale learn about leadership and sacrifice?",
+          "Describe the major locations (kingdoms, forests, ruins) Hale visits",
         ];
       }
     } else {
       return [
         "What is the meaning behind Hale's journey?",
-        "Explain the symbolism of the Path of Thorns", 
-        "Who was the old woman in the forest?",
-        "What lessons did Hale learn about leadership?",
-        "Describe the kingdom of Nomed"
+        "Explain the symbolism of the Path of Thorns",
+        "Who are the key supporting characters in Hale's story?",
+        "How do Hale's choices shape the fate of his kingdom?",
+        "What are the turning points in Hale's life and why do they matter?",
       ];
     }
   };

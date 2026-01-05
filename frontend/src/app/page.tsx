@@ -238,7 +238,11 @@ export default function HomePage() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder={loading ? "The Oracle contemplates..." : "Seek wisdom from the ancient scrolls... (Enter to send, Shift+Enter for new line)"}
+              placeholder={
+                loading
+                  ? "The Oracle contemplates..."
+                  : "Ask about Hale's story, characters, places, or events... (Enter to send, Shift+Enter for new line)"
+              }
               rows={3}
               disabled={loading}
               className="composer-textarea"
