@@ -4,8 +4,8 @@ import { useRouter } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeSanitize from "rehype-sanitize";
-import NavBar from "../../components/NavBar";
-import welcomeImg from "../../resources/Hail-Battle_01-04_.png";
+import NavBar from "../../../components/NavBar";
+import welcomeImg from "../../../resources/Hail-Battle_01-04_.png";
 
 type Message = {
   id: string;

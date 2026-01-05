@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import NavBar from "../../../components/NavBar";
-import heroVisual from "../../resources/Hail-Battle_02-01_.png";
+import heroVisual from "../../../resources/Hail-Battle_02-01_.png";
 import { fetchBookMetadata, generateHeroRewrite, fetchPages } from "../../../lib/api";
 
 type HeroSpec = {

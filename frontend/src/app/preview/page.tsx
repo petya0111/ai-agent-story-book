@@ -1,8 +1,8 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import NavBar from "../../components/NavBar";
-import { fetchBookMetadata, fetchPages } from "../../lib/api";
-import { deriveQuestionsFromTexts } from "../../lib/derive";
+import NavBar from "../../../components/NavBar";
+import { fetchBookMetadata, fetchPages } from "../../../lib/api";
+import { deriveQuestionsFromTexts } from "../../../lib/derive";
 
 export default function PreviewPage() {
   const [books, setBooks] = useState<any[]>([]);
