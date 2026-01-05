@@ -221,6 +221,28 @@ export default function HeroicTalesPage() {
   return (
     <>
       <NavBar />
+      <div className="derived-suggestions-panel">
+        <h3>Suggested questions from the Hale chronicle</h3>
+        {derivedSuggestions.length === 0 ? (
+          <p className="muted">Loading suggestions...</p>
+        ) : (
+          <div className="suggestions-list">
+            {derivedSuggestions.map((q, idx) => (
+              <button
+                key={idx}
+                className="suggestion-chip"
+                onClick={() => {
+                  // Open Oracle with the question prefilled
+                  const url = `/oracle?bookId=2&prefill=${encodeURIComponent(q)}`;
+                  router.push(url);
+                }}
+              >
+                {q}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
       <div className="heroic-tales-container">
         <div className="magical-background">
           <div className="floating-orbs">

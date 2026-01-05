@@ -36,6 +36,7 @@ function OracleContent() {
   const bookId = searchParams.get('bookId');
   const bookTitle = searchParams.get('title');
   const heroContext = searchParams.get('heroContext');
+  const prefillParam = searchParams.get('prefill');
 
   useEffect(() => {
     // Check if we have hero context from Tales page
@@ -99,6 +100,15 @@ The tapestry of fate has brought this hero to my realm. What visions do you seek
     }
 
     setTimeout(() => textareaRef.current?.focus(), 300);
+    // If a prefill question was provided via URL, populate the composer
+    if (prefillParam) {
+      try {
+        const decoded = decodeURIComponent(prefillParam);
+        setInput(decoded);
+      } catch (e) {
+        setInput(prefillParam);
+      }
+    }
   }, [bookId, bookTitle, heroContext]);
 
   useEffect(() => {
