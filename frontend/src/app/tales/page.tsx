@@ -221,6 +221,9 @@ export default function HeroicTalesPage() {
         </div>
 
         <div className="tales-hero-section">
+          <div className="hero-visual">
+            <img src="/assets/base/base_sillhouette.png" alt="Hero visual" className="hero-visual-img" />
+          </div>
           <div className="hero-content">
             <div className="hero-icon-container">
               <div className="hero-icon">⚔️</div>
@@ -231,8 +234,8 @@ export default function HeroicTalesPage() {
               <span className="title-word">Tales</span>
             </h1>
             <p className="hero-subtitle">
-              Forge legendary heroes and witness their destinies unfold across infinite realms. 
-              Every choice creates ripples in the fabric of story itself.
+              Forge legendary heroes and witness their destinies unfold. Use the Hale chronicle as story
+              source material to guide the Oracle's responses and generate variations.
             </p>
             <div className="hero-stats">
               <div className="stat-item">

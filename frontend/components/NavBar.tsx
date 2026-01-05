@@ -3,10 +3,11 @@ import { usePathname } from "next/navigation";
 import React from "react";
 
 const navItems = [
-  { href: "/", label: "Chronicle", id: "chat" },
-  { href: "/library", label: "Codex", id: "library" },
-  { href: "/versions", label: "Prophecies", id: "versions" },
-  { href: "/settings", label: "Scrolls", id: "settings" },
+  { href: "/", label: "Home", id: "home" },
+  { href: "/chronicles", label: "Chronicles", id: "chronicles" },
+  { href: "/oracle", label: "Oracle", id: "oracle" },
+  { href: "/tales", label: "Tales", id: "tales" },
+  { href: "/settings", label: "Settings", id: "settings" },
 ];
 
 export default function NavBar() {
@@ -18,10 +19,8 @@ export default function NavBar() {
         <div className="nav-brand">
           <Link href="/" legacyBehavior>
             <a className="brand-link" aria-label="Home">
-              <span className="brand-logo" aria-hidden>
-                ⚔️
-              </span>
-              <span className="brand-text">Hale's Legacy</span>
+              <img src="/assets/base/base_sillhouette.png" alt="Hale" className="brand-image" />
+              <span className="brand-text">Hale: The Last Descendant</span>
             </a>
           </Link>
         </div>

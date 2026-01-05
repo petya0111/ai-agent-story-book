@@ -179,13 +179,16 @@ export default function HomePage() {
             {messages.length === 0 && (
               <div className="welcome-section">
                 <div className="welcome-hero">
+                  <div className="welcome-visual">
+                    <img src="/assets/base/base_sillhouette.png" alt="Hale silhouette" className="welcome-image" />
+                  </div>
                   <h1 className="welcome-title">
                     <span className="title-line">Welcome to</span>
                     <span className="title-main">Hale's Legacy</span>
                   </h1>
                   <p className="welcome-subtitle">
-                    Enter the realm of ancient wisdom and mystical tales. Seek guidance from the Oracle, 
-                    explore forgotten chronicles, and uncover the secrets of the last descendant of Regalis.
+                    Enter the realm of ancient wisdom and mystical tales. Ask the Oracle, explore the chronicles,
+                    and uncover the secrets of Hale, the last descendant.
                   </p>
                   <div className="welcome-features">
                     <div className="feature" onClick={() => router.push('/chronicles')}>
