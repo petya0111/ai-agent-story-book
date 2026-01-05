@@ -3,7 +3,23 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import NavBar from "../../../components/NavBar";
 import heroVisual from "../../../resources/Hail-Battle_02-01_.png";
+import halmeaImg from "../../../resources/Halmea_02-16.png";
+import hailImg from "../../../resources/Hail_07-01_.png";
+import hailBattleImg from "../../../resources/Hail-Battle_01-04_.png";
+import shioriImg from "../../../resources/Shiori_01-02_.png";
+import pheryImg from "../../../resources/Phery_01-03_.png";
+import shadowImg from "../../../resources/The-Shadow_01-01_.jpg";
+import sunGodImg from "../../../resources/The-Sun-God_02-01_.png";
+import lednaImg from "../../../resources/Ledna_01-01_.png";
+import landwingImg from "../../../resources/Landwing_02-02_.png";
+import dragonImg from "../../../resources/Dream-dragon_02-01_.png";
 import { fetchBookMetadata, generateHeroRewrite, fetchPages } from "../../../lib/api";
+
+// Helper to normalize image imports which may be StaticImageData in Next.js
+function imgSrc(img: any): string | undefined {
+  if (!img) return undefined;
+  return typeof img === "string" ? img : img?.src;
+}
 
 type HeroSpec = {
   name: string;
@@ -16,6 +32,8 @@ type StoryVariation = {
   id: string;
   title: string;
   hero: HeroSpec;
+  // avatar may be a string path or a StaticImageData object imported by Next/Image
+  avatar?: string | any; // optional avatar image (string path or imported image object)
   description: string;
   theme: string;
   createdAt: string;
@@ -33,6 +51,7 @@ export default function HeroicTalesPage() {
   const [selectedPersonality, setSelectedPersonality] = useState<string[]>([]);
   const [heroRole, setHeroRole] = useState("");
   const [customConstraints, setCustomConstraints] = useState("");
+  const [selectedAvatar, setSelectedAvatar] = useState<string | undefined>(undefined);
 
   const personalityTraits = [
     "Brave", "Wise", "Compassionate", "Cunning", "Honorable", "Rebellious",
@@ -45,11 +64,15 @@ export default function HeroicTalesPage() {
     "Healer", "Assassin", "Bard", "Monk", "Ranger", "Paladin"
   ];
 
+  // available avatar images from resources
+  const avatarOptions = [halmeaImg, hailImg, hailBattleImg, shioriImg, pheryImg, shadowImg, sunGodImg, lednaImg, landwingImg, dragonImg];
+
   const predefinedVariations: StoryVariation[] = [
     {
       id: "original",
       title: "The Last Descendant",
       hero: { name: "Hale Mallory", age: 23, personality: ["Noble", "Thoughtful", "Determined"], role: "Royal Heir" },
+      avatar: halmeaImg,
       description: "The original tale of Hale Mallory, last descendant of Regalis, as he discovers the true meaning of leadership.",
       theme: "Classic Fantasy",
       createdAt: new Date().toISOString()
@@ -58,6 +81,7 @@ export default function HeroicTalesPage() {
       id: "warrior",
       title: "The Warrior's Path",
       hero: { name: "Thane Ironheart", age: 28, personality: ["Fierce", "Honorable", "Loyal"], role: "Warrior" },
+      avatar: hailBattleImg,
       description: "A battle-hardened warrior must learn that true strength comes from within, not from the sword.",
       theme: "Epic Adventure",
       createdAt: new Date().toISOString()
@@ -66,8 +90,63 @@ export default function HeroicTalesPage() {
       id: "mage",
       title: "The Arcane Journey",
       hero: { name: "Lyra Starweaver", age: 19, personality: ["Wise", "Curious", "Mysterious"], role: "Mage" },
+      avatar: shioriImg,
       description: "A young mage discovers that the greatest magic is not in spells, but in understanding the hearts of others.",
       theme: "Mystical Fantasy",
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: "shadow",
+      title: "Whispers of the Shadow",
+      hero: { name: "Kade the Shade", age: 31, personality: ["Cunning", "Mysterious", "Loyal"], role: "Thief" },
+      avatar: shadowImg,
+      description: "A silent figure navigates the city's underbelly and discovers an unexpected code of honor.",
+      theme: "Dark Fantasy",
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: "sunborn",
+      title: "Children of the Sun",
+      hero: { name: "Solene Aurelia", age: 26, personality: ["Compassionate", "Charismatic", "Ambitious"], role: "Paladin" },
+      avatar: sunGodImg,
+      description: "Blessed by the sun god, Solene must reconcile duty and mercy on a ruined frontier.",
+      theme: "Mythic",
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: "ledna",
+      title: "Ledna's Winter",
+      hero: { name: "Ledna Frostborne", age: 21, personality: ["Independent", "Intuitive", "Scholarly"], role: "Ranger" },
+      avatar: lednaImg,
+      description: "A ranger raised on ice and lore finds warmth in an unlikely alliance.",
+      theme: "Nordic Fantasy",
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: "phery",
+      title: "Phery's Lute",
+      hero: { name: "Phery Elmsong", age: 24, personality: ["Charismatic", "Curious", "Playful"], role: "Bard" },
+      avatar: pheryImg,
+      description: "A traveling bard whose songs carry both comfort and secret catalysts for revolt.",
+      theme: "Folk Fantasy",
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: "landwing",
+      title: "The Last Landwing",
+      hero: { name: "Arin Landwing", age: 34, personality: ["Brave", "Loyal", "Fierce"], role: "Ranger" },
+      avatar: landwingImg,
+      description: "Guardian of the cliffs, Arin's vigil is tested when old threats return.",
+      theme: "Adventure",
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: "dragon",
+      title: "Dragon's Pact",
+      hero: { name: "Mira Draven", age: 29, personality: ["Ambitious", "Intuitive", "Scholarly"], role: "Scholar" },
+      avatar: dragonImg,
+      description: "A scholar seeks the truth behind an ancient dragon pact that shaped kingdoms.",
+      theme: "Legendary",
       createdAt: new Date().toISOString()
     }
   ];
@@ -130,6 +209,8 @@ export default function HeroicTalesPage() {
           personality: selectedPersonality,
           role: heroRole
         },
+        // use selected avatar if set, otherwise pick a random avatar
+        avatar: selectedAvatar ?? avatarOptions[Math.floor(Math.random() * avatarOptions.length)],
         description: `A customized adventure featuring ${heroName}, the ${heroRole}, whose ${selectedPersonality.join(', ').toLowerCase()} nature shapes their destiny.`,
         theme: "Custom Adventure",
         createdAt: new Date().toISOString()
@@ -146,6 +227,7 @@ export default function HeroicTalesPage() {
       setHeroName("");
       setHeroAge(25);
       setSelectedPersonality([]);
+  setSelectedAvatar(undefined);
       setHeroRole("");
       setCustomConstraints("");
       setShowCreator(false);
@@ -262,7 +344,7 @@ export default function HeroicTalesPage() {
 
         <div className="tales-hero-section">
           <div className="hero-visual">
-            <img src={heroVisual} alt="Hero visual" className="hero-visual-img" />
+            <img src={imgSrc(heroVisual)} alt="Hero visual" className="hero-visual-img" />
           </div>
           <div className="hero-content">
             <div className="hero-icon-container">
@@ -414,6 +496,31 @@ export default function HeroicTalesPage() {
                     </div>
                   </div>
 
+                  <div className="forge-section avatar-picker">
+                    <div className="section-header">
+                      <h3>🖼️ Choose Avatar</h3>
+                      <p>Pick an image to represent your hero (or leave blank for a random avatar)</p>
+                    </div>
+                    <div className="avatar-picker-grid">
+                      {avatarOptions.map((a, idx) => {
+                        const src = typeof a === 'string' ? a : (a as any)?.src;
+                        return (
+                          <button
+                            key={idx}
+                            type="button"
+                            className={`avatar-picker-item ${selectedAvatar === a ? 'selected' : ''}`}
+                            onClick={() => setSelectedAvatar(a)}
+                          >
+                            <img src={src} alt={`avatar-${idx}`} />
+                          </button>
+                        );
+                      })}
+                      {selectedAvatar && (
+                        <button type="button" className="avatar-clear" onClick={() => setSelectedAvatar(undefined)}>Clear</button>
+                      )}
+                    </div>
+                  </div>
+
                   <div className="forge-section constraints">
                     <div className="section-header">
                       <h3>📜 Special Instructions</h3>
@@ -486,7 +593,15 @@ export default function HeroicTalesPage() {
                     <div className="avatar-circle" style={{
                       background: `linear-gradient(135deg, ${getThemeColor(variation.theme)}, ${getThemeColor(variation.theme)}80)`
                     }}>
-                      <span className="avatar-icon">{getRoleIcon(variation.hero.role)}</span>
+                      {variation.avatar ? (
+                        (() => {
+                          // imported images may be a string path or an object { src, width, height }
+                          const src = typeof variation.avatar === 'string' ? variation.avatar : (variation.avatar as any)?.src;
+                          return src ? <img src={src} alt={variation.hero.name} className="avatar-img" /> : <span className="avatar-icon">{getRoleIcon(variation.hero.role)}</span>;
+                        })()
+                      ) : (
+                        <span className="avatar-icon">{getRoleIcon(variation.hero.role)}</span>
+                      )}
                       <div className="avatar-glow" style={{ 
                         boxShadow: `0 0 40px ${getThemeColor(variation.theme)}60` 
                       }} />

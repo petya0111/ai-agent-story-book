@@ -4,23 +4,25 @@ import React from "react";
 import brandImg from "../resources/Hail_07-01_.png";
 
 const navItems = [
-  { href: "/", label: "Home", id: "home" },
-  { href: "/chronicles", label: "Chronicles", id: "chronicles" },
   { href: "/oracle", label: "Oracle", id: "oracle" },
   { href: "/tales", label: "Tales", id: "tales" },
-  { href: "/settings", label: "Settings", id: "settings" },
 ];
 
 export default function NavBar() {
   const pathname = usePathname();
-
+  // normalize imported image (Next can return an object with `src`)
+  const brandSrc = typeof brandImg === 'string' ? brandImg : (brandImg as any)?.src;
   return (
     <nav className="app-nav" role="navigation" aria-label="Main navigation">
       <div className="nav-inner">
         <div className="nav-brand">
           <Link href="/" legacyBehavior>
             <a className="brand-link" aria-label="Home">
-              <img src={brandImg} alt="Hale" className="brand-image" />
+              {brandSrc ? (
+                <img src={brandSrc} alt="Hale" className="brand-image" />
+              ) : (
+                <div className="brand-fallback">🏰</div>
+              )}
               <span className="brand-text">Hale: The Last Descendant</span>
             </a>
           </Link>
@@ -43,17 +45,7 @@ export default function NavBar() {
           })}
         </div>
 
-        <div className="nav-actions">
-          <Link href="/">
-            <button
-              type="button"
-              className="nav-btn"
-              title="New quest"
-            >
-              New Quest
-            </button>
-          </Link>
-        </div>
+        {/* nav-actions removed: only Oracle and Tales remain */}
       </div>
     </nav>
   );

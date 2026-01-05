@@ -8,6 +8,12 @@ import NavBar from "../../../components/NavBar";
 import oracleArt from "../../../resources/Halmea_02-16.png";
 import { chatWithBook, fetchBookDetails } from "../../../lib/api";
 
+// Helper to normalize image imports which may be StaticImageData in Next.js
+function imgSrc(img: any): string | undefined {
+  if (!img) return undefined;
+  return typeof img === "string" ? img : img?.src;
+}
+
 type Message = {
   id: string;
   role: "user" | "assistant" | "system";
@@ -272,7 +278,7 @@ The tapestry of fate has brought this hero to my realm. What visions do you seek
       <div className="oracle-page">
         <div className="oracle-header">
           <div className="oracle-art">
-            <img src={oracleArt} alt="Oracle art" className="oracle-art-img" />
+            <img src={imgSrc(oracleArt)} alt="Oracle art" className="oracle-art-img" />
           </div>
           <div className="oracle-title">
             <h1>Oracle's Wisdom</h1>
