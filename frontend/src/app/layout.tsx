@@ -2,13 +2,13 @@ import React from "react";
 import "../../styles/globals.scss";
 
 export const metadata = {
-  title: "Хейл: Последният потомък",
-  description: "Интерактивна история за Хейл и неговите приключения",
+  title: "Hale: The Last Descendant",
+  description: "An interactive story experience exploring Hale's world",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="bg">
+    <html lang="en">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
