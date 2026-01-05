@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import NavBar from "../../../components/NavBar";
-import { fetchBookMetadata, generateHeroRewrite } from "../../../lib/api";
+import { fetchBookMetadata, generateHeroRewrite, fetchPages } from "../../../lib/api";
 
 type HeroSpec = {
   name: string;
@@ -84,6 +84,23 @@ export default function HeroicTalesPage() {
     } catch (e) {
       setVariations(predefinedVariations);
     }
+  }, []);
+
+  // Auto-derived suggestions from Hale PDF (small preview)
+  const [derivedSuggestions, setDerivedSuggestions] = useState<string[]>([]);
+  useEffect(() => {
+    // fetch first few pages from the Hale book (bookId 2) and derive questions
+    async function loadPreview() {
+      try {
+        const pages = await fetchPages(2, 1, 3);
+        const texts = (pages || []).map((p: any) => p.text || "");
+        const qs = (await import("../../../lib/derive")).deriveQuestionsFromTexts(texts, 6);
+        setDerivedSuggestions(qs);
+      } catch (e) {
+        // ignore silently
+      }
+    }
+    loadPreview();
   }, []);
 
   function togglePersonality(trait: string) {
