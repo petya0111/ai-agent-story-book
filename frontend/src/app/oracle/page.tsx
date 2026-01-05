@@ -43,6 +43,7 @@ function OracleContent() {
   const bookTitle = searchParams.get('title');
   const heroContext = searchParams.get('heroContext');
   const prefillParam = searchParams.get('prefill');
+  const prefillOptionsParam = searchParams.get('prefillOptions');
 
   useEffect(() => {
     // Check if we have hero context from Tales page
@@ -106,13 +107,27 @@ The tapestry of fate has brought this hero to my realm. What visions do you seek
     }
 
     setTimeout(() => textareaRef.current?.focus(), 300);
-    // If a prefill question was provided via URL, populate the composer
+    // If a single prefill question was provided via URL, populate the composer
     if (prefillParam) {
       try {
         const decoded = decodeURIComponent(prefillParam);
         setInput(decoded);
       } catch (e) {
         setInput(prefillParam);
+      }
+    }
+
+    // If multiple prefill options were provided (JSON array), parse and surface them
+    if (prefillOptionsParam) {
+      try {
+        const decoded = decodeURIComponent(prefillOptionsParam);
+        const arr = JSON.parse(decoded);
+        if (Array.isArray(arr) && arr.length > 0) {
+          setInput(arr[0]);
+          setPrefillOptions(arr);
+        }
+      } catch (e) {
+        console.warn('Failed to parse prefillOptions', e);
       }
     }
   }, [bookId, bookTitle, heroContext]);
@@ -272,6 +287,8 @@ The tapestry of fate has brought this hero to my realm. What visions do you seek
 
   const suggestedQuestions = getSuggestedQuestions();
 
+  const [prefillOptions, setPrefillOptions] = useState<string[] | null>(null);
+
   return (
     <>
       <NavBar />
@@ -325,7 +342,26 @@ The tapestry of fate has brought this hero to my realm. What visions do you seek
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Always show suggested questions, but smaller after first interaction */}
+            {/* If the caller provided hero-specific prefill options, show them first */}
+            {prefillOptions && (
+              <div className={`prefill-options ${messages.length > 1 ? 'compact' : ''}`}>
+                <h3>🔖 Suggested prompts for this hero</h3>
+                <div className="questions-grid">
+                  {prefillOptions.map((q, i) => (
+                    <button
+                      key={i}
+                      className="suggestion-btn"
+                      onClick={() => setInput(q)}
+                      disabled={loading}
+                    >
+                      {q}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Always show general suggested questions as a fallback */}
             <div className={`suggested-questions ${messages.length > 1 ? 'compact' : ''}`}>
               <h3>🌟 Seek Wisdom About:</h3>
               <div className="questions-grid">

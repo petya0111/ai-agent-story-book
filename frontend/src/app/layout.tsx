@@ -1,5 +1,6 @@
 import React from "react";
 import "../../styles/globals.scss";
+import ResponsiveSizesSetter from "../components/ResponsiveSizesSetter";
 
 export const metadata = {
   title: "Hale: The Last Descendant",
@@ -19,7 +20,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
-      <body style={{ margin: 0, fontFamily: "'Cormorant Garamond', serif" }}>{children}</body>
+      <body style={{ margin: 0, fontFamily: "'Cormorant Garamond', serif" }}>
+        <ResponsiveSizesSetter />
+        {children}
+      </body>
     </html>
   );
 }

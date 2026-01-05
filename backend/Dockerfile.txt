@@ -1,28 +1,39 @@
 # Multi-stage build for Ktor backend
 # Stage 1: Build
-FROM gradle:8.8-jdk21-alpine AS build
+FROM gradle:8.8-jdk17-jammy AS build
 WORKDIR /workspace
 
-# Copy source
+# Copy backend sources into the build stage. This Dockerfile is intended to be built
+# with the build context set to the `backend/` directory (i.e. `docker build -f backend/Dockerfile.txt backend`).
 COPY . .
 
-# Build a runnable distribution (bin + libs)
-RUN gradle --no-daemon clean installDist
+# Build the fat jar using the project-provided 'fatJar' fallback task
+# This avoids relying on bootJar being enabled in all environments.
+RUN gradle --no-daemon clean fatJar
+
+# Normalize the produced jar into a known location so the runtime stage can copy it reliably
+# Some builds place the jar under project-specific subpaths (e.g. ./build/libs or ./*/build/libs).
+RUN set -eux; \
+	JAR=$(find . -type f -path "*/build/libs/*.jar" | head -n1) || true; \
+	if [ -n "$JAR" ]; then cp "$JAR" /workspace/app.jar; else echo "No jar found"; fi
 
 # Stage 2: Runtime (slim JRE)
-FROM eclipse-temurin:21-jre-alpine
+FROM eclipse-temurin:17-jre-jammy
 
 # Non-root user
-RUN addgroup -S app && adduser -S app -G app
+# Use portable commands compatible with Debian-based images
+RUN groupadd -r app && useradd -r -g app app
 
 WORKDIR /app
 
-# Copy the built distribution
-COPY --from=build /workspace/build/install/fantasy-rag-backend /app
+# Copy the built fat jar from the build stage
+COPY --from=build /workspace/app.jar /app/app.jar
 
 # Include sample data (for quick testing)
-# This path comes from the repo (backend/data)
-COPY data /app/data
+# When building from the repository root the backend sources live under /workspace/backend in the build stage.
+# Copy the data directory from the build stage into the runtime image. If you build from the backend/ folder as the context
+# adjust the path accordingly.
+COPY --from=build /workspace/data /app/data
 
 # Container config
 ENV SERVER_PORT=8080
@@ -34,5 +45,5 @@ EXPOSE 8080
 RUN chown -R app:app /app
 USER app
 
-# Start the app
-CMD ["/app/bin/fantasy-rag-backend"]
+# Start the app using the fat jar
+CMD ["sh", "-c", "java $JAVA_OPTS -jar /app/app.jar"]

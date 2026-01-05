@@ -51,7 +51,8 @@ export default function HeroicTalesPage() {
   const [selectedPersonality, setSelectedPersonality] = useState<string[]>([]);
   const [heroRole, setHeroRole] = useState("");
   const [customConstraints, setCustomConstraints] = useState("");
-  const [selectedAvatar, setSelectedAvatar] = useState<string | undefined>(undefined);
+  // selectedAvatar may be a string path or an imported image object (StaticImageData)
+  const [selectedAvatar, setSelectedAvatar] = useState<string | any | undefined>(undefined);
 
   const personalityTraits = [
     "Brave", "Wise", "Compassionate", "Cunning", "Honorable", "Rebellious",
@@ -261,14 +262,24 @@ export default function HeroicTalesPage() {
       taleDescription: variation.description
     };
     
-    // Encode the hero context as URL parameters
+    // Build a small set of hero-specific question templates and send them to Oracle
+    const templates = [
+      `What challenges will ${heroContext.heroName} face as a ${heroContext.heroRole}?`,
+      `How do ${heroContext.heroName}'s traits (${heroContext.heroPersonality}) influence their destiny in \"${heroContext.taleTitle}\"?`,
+      `How might ${heroContext.heroName} intersect with Hale and the major events of the chronicle?`,
+      `What is the single decision that will define ${heroContext.heroName}'s fate in this tale?`,
+      `Describe a surprising ally or enemy ${heroContext.heroName} might meet in ${heroContext.taleTitle}.`
+    ];
+
+    // Encode the hero context and the list of prefill options as URL parameters
     const params = new URLSearchParams({
       bookId: '2', // Hale story book ID
       title: `${variation.title} - Featuring ${variation.hero.name}`,
-      heroContext: JSON.stringify(heroContext)
+      heroContext: JSON.stringify(heroContext),
+      prefillOptions: JSON.stringify(templates)
     });
-    
-    // Navigate to Oracle with hero context
+
+    // Navigate to Oracle with hero context + multiple prefill options
     router.push(`/oracle?${params.toString()}`);
   }
 
@@ -343,9 +354,6 @@ export default function HeroicTalesPage() {
         </div>
 
         <div className="tales-hero-section">
-          <div className="hero-visual">
-            <img src={imgSrc(heroVisual)} alt="Hero visual" className="hero-visual-img" />
-          </div>
           <div className="hero-content">
             <div className="hero-icon-container">
               <div className="hero-icon">⚔️</div>
@@ -493,31 +501,6 @@ export default function HeroicTalesPage() {
                           </div>
                         </button>
                       ))}
-                    </div>
-                  </div>
-
-                  <div className="forge-section avatar-picker">
-                    <div className="section-header">
-                      <h3>🖼️ Choose Avatar</h3>
-                      <p>Pick an image to represent your hero (or leave blank for a random avatar)</p>
-                    </div>
-                    <div className="avatar-picker-grid">
-                      {avatarOptions.map((a, idx) => {
-                        const src = typeof a === 'string' ? a : (a as any)?.src;
-                        return (
-                          <button
-                            key={idx}
-                            type="button"
-                            className={`avatar-picker-item ${selectedAvatar === a ? 'selected' : ''}`}
-                            onClick={() => setSelectedAvatar(a)}
-                          >
-                            <img src={src} alt={`avatar-${idx}`} />
-                          </button>
-                        );
-                      })}
-                      {selectedAvatar && (
-                        <button type="button" className="avatar-clear" onClick={() => setSelectedAvatar(undefined)}>Clear</button>
-                      )}
                     </div>
                   </div>
 

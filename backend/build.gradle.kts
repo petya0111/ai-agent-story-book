@@ -53,11 +53,27 @@ tasks.withType<org.springframework.boot.gradle.tasks.bundling.BootJar> {
     archiveClassifier.set("")
 }
 
-tasks.withType<Jar> {
+// Disable the standard 'jar' task (don't disable all Jar-based tasks like bootJar/fatJar)
+tasks.named<Jar>("jar") {
     enabled = false
 }
 
 // Heroku requires a 'stage' task
 tasks.register("stage") {
     dependsOn("bootJar")
+}
+
+// Fallback fat jar task: assemble an executable jar including runtime dependencies.
+// Some environments (or CI) may disable bootJar; fatJar ensures we can produce a runnable artifact.
+tasks.register<Jar>("fatJar") {
+    archiveBaseName.set("fantasy-rag-backend-fat")
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    manifest {
+        attributes("Main-Class" to "com.example.BookAgentApplicationKt")
+    }
+    from(sourceSets.main.get().output)
+    dependsOn(configurations.runtimeClasspath)
+    from({
+        configurations.runtimeClasspath.get().filter { it.name.endsWith(".jar") }.map { zipTree(it) }
+    })
 }
