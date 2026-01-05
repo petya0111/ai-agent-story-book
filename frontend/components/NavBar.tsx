@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
+import brandImg from "../resources/Hail_07-01_.png";
 
 const navItems = [
   { href: "/", label: "Home", id: "home" },
@@ -19,7 +20,7 @@ export default function NavBar() {
         <div className="nav-brand">
           <Link href="/" legacyBehavior>
             <a className="brand-link" aria-label="Home">
-              <img src="/assets/base/base_sillhouette.png" alt="Hale" className="brand-image" />
+              <img src={brandImg} alt="Hale" className="brand-image" />
               <span className="brand-text">Hale: The Last Descendant</span>
             </a>
           </Link>

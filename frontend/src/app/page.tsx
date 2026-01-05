@@ -5,6 +5,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeSanitize from "rehype-sanitize";
 import NavBar from "../../components/NavBar";
+import welcomeImg from "../../resources/Hail-Battle_01-04_.png";
 
 type Message = {
   id: string;
@@ -180,7 +181,7 @@ export default function HomePage() {
               <div className="welcome-section">
                 <div className="welcome-hero">
                   <div className="welcome-visual">
-                    <img src="/assets/base/base_sillhouette.png" alt="Hale silhouette" className="welcome-image" />
+                    <img src={welcomeImg} alt="Hale silhouette" className="welcome-image" />
                   </div>
                   <h1 className="welcome-title">
                     <span className="title-line">Welcome to</span>

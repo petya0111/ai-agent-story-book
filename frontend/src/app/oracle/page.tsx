@@ -5,6 +5,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeSanitize from "rehype-sanitize";
 import NavBar from "../../../components/NavBar";
+import oracleArt from "../../resources/Halmea_02-16.png";
 import { chatWithBook, fetchBookDetails } from "../../../lib/api";
 
 type Message = {
@@ -261,7 +262,7 @@ The tapestry of fate has brought this hero to my realm. What visions do you seek
       <div className="oracle-page">
         <div className="oracle-header">
           <div className="oracle-art">
-            <img src="/assets/hair/hair_front_wisps.png" alt="Oracle art" className="oracle-art-img" />
+            <img src={oracleArt} alt="Oracle art" className="oracle-art-img" />
           </div>
           <div className="oracle-title">
             <h1>Oracle's Wisdom</h1>

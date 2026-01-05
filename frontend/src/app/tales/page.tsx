@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import NavBar from "../../../components/NavBar";
+import heroVisual from "../../resources/Hail-Battle_02-01_.png";
 import { fetchBookMetadata, generateHeroRewrite, fetchPages } from "../../../lib/api";
 
 type HeroSpec = {
@@ -239,7 +240,7 @@ export default function HeroicTalesPage() {
 
         <div className="tales-hero-section">
           <div className="hero-visual">
-            <img src="/assets/base/base_sillhouette.png" alt="Hero visual" className="hero-visual-img" />
+            <img src={heroVisual} alt="Hero visual" className="hero-visual-img" />
           </div>
           <div className="hero-content">
             <div className="hero-icon-container">
