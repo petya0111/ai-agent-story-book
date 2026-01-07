@@ -1,0 +1,4 @@
+build:
+  docker:
+    # Reference the Dockerfile inside the backend container-build/ folder
+    web: container-build/Dockerfile

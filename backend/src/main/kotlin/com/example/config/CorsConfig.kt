@@ -11,10 +11,15 @@ class CorsConfig {
     @Bean
     fun corsFilter(): CorsFilter {
         val config = CorsConfiguration()
-        config.allowedOriginPatterns = listOf("*") // Use allowedOriginPatterns when allowCredentials is true
+        // Use a wildcard origin. NOTE: when using a wildcard origin you MUST set allowCredentials = false
+        // because browsers will reject credentialed responses with Access-Control-Allow-Origin: *.
+        // If you need credentialed requests (cookies, Authorization headers), switch to explicit origins
+        // or use allowedOriginPatterns and ensure the response sets a specific origin value.
+        config.allowedOrigins = listOf("*")
         config.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS")
         config.allowedHeaders = listOf("*")
-        config.allowCredentials = true
+    // disable credentialed responses when allowing any origin
+    config.allowCredentials = false
         val source = UrlBasedCorsConfigurationSource()
         source.registerCorsConfiguration("/**", config)
         return CorsFilter(source)
