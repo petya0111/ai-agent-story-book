@@ -26,6 +26,14 @@ class PdfIngestRunner(
 
     @Transactional
     override fun run(vararg args: String?) {
+        // Gate ingestion behind an explicit env var to avoid running on every startup.
+        // Default: disabled. Set INGEST_ON_STARTUP=true in the environment to enable one-time ingestion.
+        val ingestOnStartup = env.getProperty("INGEST_ON_STARTUP", "false").toBoolean()
+        if (!ingestOnStartup) {
+            log.info("INGEST_ON_STARTUP is not true; skipping PDF ingestion on startup. Set INGEST_ON_STARTUP=true to enable.")
+            return
+        }
+
         // Only ingest if no books exist (safe for dev)
         if (bookRepo.count() > 0) {
             log.info("Books already present in DB — skipping PDF ingestion.")
