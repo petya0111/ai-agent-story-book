@@ -1,4 +1,6 @@
-export const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
+// Default to the deployed Heroku backend API if NEXT_PUBLIC_API_URL isn't set in the environment.
+// You can override this at deploy time by setting NEXT_PUBLIC_API_URL on the hosting platform.
+export const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://ai-story-book-backend.herokuapp.com/api";
 
 export async function fetchBookMetadata() {
   const res = await fetch(`${API_BASE}/book/metadata`);
