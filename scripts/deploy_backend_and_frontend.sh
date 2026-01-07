@@ -1,5 +1,5 @@
 # ---- Edit these two names if you prefer different apps (must be lowercase) ----
-APP_BACKEND=${1:-my-backend-name-4289bc256cb4}    # pass as first arg or edit here
+APP_BACKEND=${1:-ai-story-book-backend}    # pass as first arg or edit here
 APP_FRONTEND=${2:-ai-story-book-frontend}          # pass as second arg or edit here
 # ------------------------------------------------------------------------------
 
