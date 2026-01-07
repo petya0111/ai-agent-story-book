@@ -15,7 +15,9 @@ echo "==> Ensure backend app exists"
 heroku apps:info --app "$APP_BACKEND" 2>/dev/null || heroku create "$APP_BACKEND"
 
 echo "==> Add Postgres addon (idempotent)"
-heroku addons:create heroku-postgresql:hobby-dev --app "$APP_BACKEND" || true
+# Use the newer 'essential-0' plan name; fall back to hobby-dev if it exists for older accounts
+heroku addons:create heroku-postgresql:essential-0 --app "$APP_BACKEND" || \
+  heroku addons:create heroku-postgresql:hobby-dev --app "$APP_BACKEND" || true
 
 echo "==> Build backend JAR"
 cd backend
@@ -38,14 +40,10 @@ cd ..
 echo "==> Push backend container to Heroku"
 heroku container:login
 
-# prefer --context if supported by Heroku CLI
-if heroku help container:push | grep -q -- '--context'; then
-  heroku container:push web --app "$APP_BACKEND" --context backend/container-build
-else
-  docker build -t registry.heroku.com/"$APP_BACKEND"/web backend/container-build
-  heroku container:login
-  docker push registry.heroku.com/"$APP_BACKEND"/web
-fi
+# Build the image locally and push to Heroku registry (avoid --context for CLI compatibility)
+docker build --platform linux/amd64 -t registry.heroku.com/"$APP_BACKEND"/web backend/container-build
+heroku container:login
+docker push registry.heroku.com/"$APP_BACKEND"/web
 
 heroku container:release web --app "$APP_BACKEND"
 heroku ps:scale web=1 --app "$APP_BACKEND"
@@ -53,7 +51,18 @@ heroku ps:scale web=1 --app "$APP_BACKEND"
 echo "==> Wire database + safe envs for backend"
 DBURL=$(heroku config:get DATABASE_URL --app "$APP_BACKEND" || echo "")
 if [ -n "$DBURL" ]; then
-  heroku config:set SPRING_DATASOURCE_URL="$DBURL" --app "$APP_BACKEND"
+  # Convert postgres://USER:PASS@HOST:PORT/DB -> JDBC form and set separate username/password vars
+  stripped=${DBURL#*://}
+  userpass=${stripped%%@*}
+  hostportdb=${stripped#*@}
+  user=${userpass%%:*}
+  pass=${userpass#*:}
+  host=${hostportdb%%:*}
+  rest=${hostportdb#*:}
+  port=${rest%%/*}
+  dbname=${rest#*/}
+  jdbc="jdbc:postgresql://$host:$port/$dbname?sslmode=require"
+  heroku config:set SPRING_DATASOURCE_URL="$jdbc" SPRING_DATASOURCE_USERNAME="$user" SPRING_DATASOURCE_PASSWORD="$pass" --app "$APP_BACKEND"
 fi
 # Keep ingestion off while debugging
 heroku config:set BOOK_PDF_PATH='backend/books/hale.pdf' INGEST_ON_STARTUP=false --app "$APP_BACKEND"
