@@ -8,4 +8,4 @@
 build/
 out/
 *.log
-.DS_Store
+.DS_Storebackend/.env
