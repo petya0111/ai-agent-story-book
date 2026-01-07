@@ -1,7 +1,9 @@
 package com.example.config
 
+import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.core.Ordered
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 import org.springframework.web.filter.CorsFilter
@@ -9,19 +11,22 @@ import org.springframework.web.filter.CorsFilter
 @Configuration
 class CorsConfig {
     @Bean
-    fun corsFilter(): CorsFilter {
+    fun corsFilter(): FilterRegistrationBean<CorsFilter> {
         val config = CorsConfiguration()
-        // Use a wildcard origin. NOTE: when using a wildcard origin you MUST set allowCredentials = false
-        // because browsers will reject credentialed responses with Access-Control-Allow-Origin: *.
-        // If you need credentialed requests (cookies, Authorization headers), switch to explicit origins
-        // or use allowedOriginPatterns and ensure the response sets a specific origin value.
-        config.allowedOrigins = listOf("*")
+        // Allow any origin. When allowing '*', browsers reject credentialed requests.
+        // We deliberately set allowCredentials = false to avoid that restriction.
+        config.allowedOriginPatterns = listOf("*")
         config.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS")
         config.allowedHeaders = listOf("*")
-    // disable credentialed responses when allowing any origin
-    config.allowCredentials = false
+        config.allowCredentials = false
+
         val source = UrlBasedCorsConfigurationSource()
         source.registerCorsConfiguration("/**", config)
-        return CorsFilter(source)
+
+        val filter = CorsFilter(source)
+        val registration = FilterRegistrationBean(filter)
+        // Make sure this runs very early
+        registration.order = Ordered.HIGHEST_PRECEDENCE
+        return registration
     }
 }

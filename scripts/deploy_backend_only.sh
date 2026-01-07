@@ -34,9 +34,10 @@ if [ -z "$JAR_NAME" ]; then
   exit 1
 fi
 echo "Using jar: $JAR_NAME"
-cp "build/libs/$JAR_NAME" ../container-build/app.jar
-echo "Copied app.jar into container-build/"
-ls -la ../container-build/app.jar
+# copy jar into backend/container-build (we're currently in backend/)
+cp "build/libs/$JAR_NAME" container-build/app.jar
+echo "Copied app.jar into backend/container-build/app.jar"
+ls -la container-build/app.jar
 cd ..
 
 # push container
