@@ -57,8 +57,15 @@ class GenerateController(
             .retrieve()
             .bodyToMono(Map::class.java)
             .map { it as Map<String, Any> }
+        val response = try {
+            responseMono.block()
+        } catch (e: org.springframework.web.reactive.function.client.WebClientResponseException) {
+            // Propagate the upstream status (e.g. 429) and include the response body for diagnostics
+            return ResponseEntity.status(e.statusCode.value()).body(mapOf("error" to (e.message ?: "upstream error"), "upstreamBody" to e.responseBodyAsString))
+        } catch (e: Exception) {
+            return ResponseEntity.status(500).body(mapOf("error" to (e.message ?: "internal error")))
+        }
 
-        val response = responseMono.block()
         return ResponseEntity.ok(response)
     }
 
@@ -83,9 +90,10 @@ class GenerateController(
             else -> ""
         }
 
-        val system = "You are a mystical Oracle with ancient wisdom. Use the provided book context and hero information when answering questions. Speak in a wise, mystical tone befitting an oracle. If hero context is provided, focus on that specific character's journey and story."
+        val system = "You are an oracle. Write concise, modern answers (<= 200 words). Do NOT use poetic salutations such as 'Ah, seeker of truths' or 'dear seeker'. Avoid repeating the same rhetorical structure. Prefer specific references to provided context."
 
         val userContent = StringBuilder()
+            .append("Using the provided context, summarize the key turning points for the hero Hale in plain modern prose.")
             .append(if (contextText.isNotBlank()) "Context from book:\n$contextText\n\n" else "")
             .append(if (!req.heroContext.isNullOrBlank()) "Hero context:\n${req.heroContext}\n\n" else "")
             .append("User message:\n")
@@ -93,13 +101,13 @@ class GenerateController(
             .toString()
 
         val payload = mapOf(
-            "model" to "gpt-4o-mini",
+            "model" to "gpt-5-mini",
             "messages" to listOf(
                 mapOf("role" to "system", "content" to system),
                 mapOf("role" to "user", "content" to userContent)
             ),
-            "max_tokens" to 800,
-            "temperature" to 0.5
+            "max_tokens" to 300,
+            "temperature" to 0.8
         )
 
         val responseMono: Mono<Map<String, Any>> = webClient.post()
@@ -109,8 +117,14 @@ class GenerateController(
             .retrieve()
             .bodyToMono(Map::class.java)
             .map { it as Map<String, Any> }
+        val response = try {
+            responseMono.block()
+        } catch (e: org.springframework.web.reactive.function.client.WebClientResponseException) {
+            return ResponseEntity.status(e.statusCode.value()).body(mapOf("error" to (e.message ?: "upstream error"), "upstreamBody" to e.responseBodyAsString))
+        } catch (e: Exception) {
+            return ResponseEntity.status(500).body(mapOf("error" to (e.message ?: "internal error")))
+        }
 
-        val response = responseMono.block()
         return ResponseEntity.ok(response)
     }
 }
