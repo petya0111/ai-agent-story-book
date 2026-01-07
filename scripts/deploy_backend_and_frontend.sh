@@ -28,9 +28,11 @@ if [ -z "$JAR_NAME" ]; then
   exit 1
 fi
 echo "Using jar: $JAR_NAME"
-cp "build/libs/$JAR_NAME" ../container-build/app.jar
-echo "Copied app.jar -> container-build/app.jar"
-ls -la ../container-build/app.jar
+# copy the produced jar into the backend Docker build context
+# we are currently in backend/, so copy to backend/container-build/app.jar
+cp "build/libs/$JAR_NAME" container-build/app.jar
+echo "Copied app.jar -> backend/container-build/app.jar"
+ls -la container-build/app.jar
 cd ..
 
 echo "==> Push backend container to Heroku"
