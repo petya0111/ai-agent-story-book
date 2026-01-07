@@ -46,7 +46,7 @@ class GenerateController(
                 mapOf("role" to "system", "content" to system),
                 mapOf("role" to "user", "content" to user)
             ),
-            "max_tokens" to 800,
+            "max_completion_tokens" to 800,
             "temperature" to 0.4
         )
 
@@ -93,7 +93,6 @@ class GenerateController(
         val system = "You are an oracle. Write concise, modern answers (<= 200 words). Do NOT use poetic salutations such as 'Ah, seeker of truths' or 'dear seeker'. Avoid repeating the same rhetorical structure. Prefer specific references to provided context."
 
         val userContent = StringBuilder()
-            .append("Using the provided context, summarize the key turning points for the hero Hale in plain modern prose.")
             .append(if (contextText.isNotBlank()) "Context from book:\n$contextText\n\n" else "")
             .append(if (!req.heroContext.isNullOrBlank()) "Hero context:\n${req.heroContext}\n\n" else "")
             .append("User message:\n")
@@ -101,13 +100,13 @@ class GenerateController(
             .toString()
 
         val payload = mapOf(
-            "model" to "gpt-5-mini",
+            "model" to "gpt-4o-mini",
             "messages" to listOf(
                 mapOf("role" to "system", "content" to system),
                 mapOf("role" to "user", "content" to userContent)
             ),
-            "max_tokens" to 300,
-            "temperature" to 0.8
+            "max_completion_tokens" to 300,
+            "temperature" to 0.4
         )
 
         val responseMono: Mono<Map<String, Any>> = webClient.post()
