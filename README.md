@@ -15,6 +15,11 @@ An intelligent story generation platform that uses AI to help create and modify 
 - **🌐 Frontend**: https://ai-story-book-frontend-543348ab1276.herokuapp.com
 - **⚙️ Backend API**: https://ai-story-book-backend-366deb5178f1.herokuapp.com
 
+## Deployment
+```bash
+bash /Users/petyamarinova/Documents/ai-agent-story-book/scripts/deploy_backend_and_frontend.sh
+```
+
 ## 🛠️ Technology Stack
 
 ### Backend (Spring Boot + Kotlin)

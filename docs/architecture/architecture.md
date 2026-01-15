@@ -5,61 +5,43 @@
 ### Mermaid диаграма
 
 ```mermaid
-flowchart LR
-  %% ========== USER ==========
-  subgraph U["👤 User"]
-    B["📱💻 Browser<br/>Next.js Frontend"]
+graph LR
+  subgraph User
+    Browser["Browser (Mobile / Desktop)\nNext.js Frontend"]
   end
 
-  %% ========== FRONTEND ==========
-  subgraph FE["🌐 Frontend Hosting<br/>(Vercel / Heroku)"]
-    FE_APP["Next.js App<br/><small>NEXT_PUBLIC_API_URL</small>"]
+  subgraph FrontendHost["Frontend hosting (Heroku / Vercel)"]
+    Frontend["Next.js app\nENV: NEXT_PUBLIC_API_URL -> https://<backend>.herokuapp.com"]
   end
 
-  %% ========== BACKEND ==========
-  subgraph BE["🐳 Backend Runtime<br/>(Heroku Dyno / Docker)"]
-    REG["📦 Container Registry<br/>(Docker / Heroku)"]
-    API["☕ Kotlin Spring Boot API<br/>app.jar"]
-    PDF["📄 Static PDFs<br/>/backend/books/*.pdf"]
+  subgraph BackendHost["Backend container (Heroku Dyno / Docker)"]
+    Registry["Docker / Heroku Container Registry"]
+    BackendContainer["Kotlin Spring Boot\nDocker image: app.jar"]
+    PDFStore["Static PDF in image or mounted volume\n(backend/books/hale.pdf)"]
   end
 
-  %% ========== DATABASE ==========
-  subgraph DB["🗄️ Database"]
-    PG[("PostgreSQL<br/>Heroku Postgres")]
+  subgraph Database["Database (Heroku Postgres)"]
+    Postgres[("Postgres DB\nSPRING_DATASOURCE_URL/JDBC")]
   end
 
-  %% ========== EXTERNAL ==========
-  subgraph EXT["☁️ External Services"]
-    AI["🤖 OpenAI API<br/>chat/completions"]
+  subgraph External["External services"]
+    OpenAI["OpenAI API\n(v1/chat/completions)"]
   end
 
-  %% ========== FLOWS ==========
-  B -->|HTTP| FE_APP
-  FE_APP -->|fetch / XHR| API
+  Browser -->|calls API| Frontend
+  Frontend -->|XHR / fetch to NEXT_PUBLIC_API_URL| BackendContainer
+  BackendContainer -->|JDBC| Postgres
+  BackendContainer -->|calls| OpenAI
+  BackendContainer -->|image push/pull| Registry
+  Registry -->|hosts image for deploy| BackendHost
+  BackendContainer -.->|contains| PDFStore
 
-  API -->|JDBC| PG
-  API -->|REST| AI
+  %% Notes
+  classDef infra fill:#f8f9fa,stroke:#333,stroke-width:1px;
+  class BackendContainer,Registry,Postgres,OpenAI infra;
 
-  REG -->|deploy image| API
-  API -.->|bundled / mounted| PDF
-
-  %% ========== STYLES ==========
-  classDef user fill:#E3F2FD,stroke:#1E88E5,stroke-width:1px;
-  classDef frontend fill:#E8F5E9,stroke:#43A047,stroke-width:1px;
-  classDef backend fill:#FFF3E0,stroke:#FB8C00,stroke-width:1px;
-  classDef database fill:#FCE4EC,stroke:#D81B60,stroke-width:1px;
-  classDef external fill:#F3E5F5,stroke:#8E24AA,stroke-width:1px;
-
-  class B user;
-  class FE_APP frontend;
-  class API,REG,PDF backend;
-  class PG database;
-  class AI external;
-
-  %% ========== LINKS ==========
-  click REG "https://devcenter.heroku.com/articles/container-registry-and-runtime" "Heroku Container Registry"
-  click AI "https://platform.openai.com/docs/api-reference" "OpenAI API"
-
+  click Registry "https://devcenter.heroku.com/articles/container-registry-and-runtime" "Heroku Container Registry"
+  click OpenAI "https://platform.openai.com/docs/api-reference" "OpenAI API docs"
 ```
 
 ### Обяснение (на български)

@@ -27,6 +27,11 @@ $accent-rose: #f43f5e;
   --mystical-fog-width: 80%;
 }
 
+/* Use border-box everywhere to avoid unexpected overflow from padding/borders */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 html,
 body,
 #__next {
@@ -1517,7 +1522,8 @@ textarea[disabled] {
     opacity: 0.4; 
   }
   100% { 
-    transform: translateX(calc(100vw + 40px)) translateY(-12px) scale(1.05); 
+    /* use percentage relative to the containing block to avoid forcing viewport-width and causing horizontal scroll */
+    transform: translateX(calc(100% + 40px)) translateY(-12px) scale(1.05); 
     opacity: 0; 
   }
 }
@@ -1997,6 +2003,155 @@ textarea[disabled] {
   background: rgba(139, 92, 246, 0.05);
 }
 
+/* ===== TABLET (iPad / small laptops) tweaks ===== */
+@media (min-width: 761px) and (max-width: 1024px) {
+  :root {
+    --avatar-thumb-size: 36px;
+    --avatar-circle-size: 100px;
+    --hero-visual-max-width: 320px;
+    --hero-visual-min-width: 180px;
+    --mystical-fog-width: 88%;
+  }
+
+  /* Navigation: slightly smaller and more compact */
+  .app-nav { height: 70px; }
+  .nav-inner { max-width: 1100px; padding: 0 20px; }
+  .brand-text { font-size: 20px; }
+  .brand-image, .brand-fallback { width: 48px; height: 48px; }
+  .nav-items { margin-left: 12px; gap: 12px; }
+
+  /* Header / hero adjustments for tablet */
+  .tales-hero-section { padding: 3rem 2rem; }
+  .tales-hero-section .hero-content { max-width: 520px; }
+  .tales-hero-section .hero-title { font-size: 3rem; }
+  .tales-hero-section .hero-subtitle { font-size: 1.2rem; max-width: 420px; }
+  .tales-hero-section .hero-stats { gap: 1.8rem; }
+
+  /* Hero action sizing */
+  .hero-action .forge-new-hero { padding: 1.25rem 2rem; font-size: 1.15rem; }
+
+  /* Messages and composer spacing */
+  .full-chat-area { padding: 22px; gap: 18px; }
+  .messages-panel { padding: 22px; padding-bottom: 200px; border-radius: 18px; }
+  .composer-panel { padding: 18px; bottom: 18px; border-radius: 20px; }
+  .composer-textarea { font-size: 15px; min-height: 90px; }
+
+  /* Conversation widths - allow two-column like layout on tablet */
+  .conversation-area { max-width: 960px; margin: 0 auto; }
+  .messages-container .message { gap: 0.8rem; }
+
+  /* Grids: reduce min sizes so more items fit side-by-side on tablets */
+  .welcome-features { gap: 1.25rem; }
+  .welcome-features .feature { padding: 2rem; }
+  .books-grid { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+  .legends-gallery { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+
+  /* Hero visual scaling */
+  .hero-visual .hero-visual-img { max-width: calc(var(--hero-visual-max-width) + 40px); }
+
+  /* Avatar and showcase sizing */
+  .avatar-circle { width: 100px; height: 100px; }
+  .hero-showcase .hero-avatar { min-width: 120px; }
+
+  /* Forge modal: slightly narrower and comfortable padding */
+  .hero-forge-modal .forge-container { max-width: 760px; padding: 1.5rem; }
+
+  /* Suggested questions: more columns but still readable */
+  .suggested-questions .questions-grid, .prefill-options .questions-grid { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+
+  /* Reduce heavy shadows on tablet to keep contrast readable */
+  .app-nav, .messages-panel, .composer-panel, .hero-forge-modal .forge-container { box-shadow: 0 12px 30px rgba(0,0,0,0.7); }
+
+  /* Improve tap target sizes for toolbar/buttons */
+  .nav-item, .nav-btn, .button, .send-btn, .forge-hero-btn { padding: 10px 16px; border-radius: 12px; }
+}
+
+/* ===== Reduced motion / low-power devices ===== */
+/* Respect user's prefers-reduced-motion setting and provide a utility class
+   so the app can toggle reduced-motion for slow devices programmatically. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* disable heavy background animations and decorative motion */
+  body::before,
+  .composer-panel::after,
+  .brand-logo,
+  .hero-icon,
+  .feature-icon,
+  .orb,
+  .card-particle,
+  .avatar-glow,
+  .btn-shine,
+  .icon-glow,
+  .floating-particles .card-particle,
+  .floating-orbs .orb {
+    animation: none !important;
+  }
+
+  /* reduce hover transforms to immediate state */
+  .button, .nav-item, .feature, .message-bubble, .forge-hero-btn {
+    transition: none !important;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+}
+
+/* Utility class to force reduced-motion mode from JS for slow devices detection */
+.reduced-motion {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  body::before,
+  .composer-panel::after { animation: none !important; }
+  .button, .nav-item, .feature, .message-bubble, .forge-hero-btn { transition: none !important; transform: none !important; box-shadow: none !important; }
+}
+
+/* ===== Soft reduced-motion (gentler) ===== */
+/* Use `.reduced-motion-soft` to shorten/simplify animations instead of stopping them entirely. */
+.reduced-motion-soft {
+  /* faster, but still present transitions */
+  *, *::before, *::after {
+    transition-duration: 140ms !important;
+    transition-timing-function: ease-out !important;
+  }
+
+  /* Background motion: reduce from 20s -> ~8s */
+  body::before { animation-duration: 8s !important; opacity: 0.5 !important; }
+
+  /* Composer gradient shifts: 4s -> 2s */
+  .composer-panel::after { animation-duration: 2s !important; }
+
+  /* Hero/title pulses: faster and subtler */
+  .brand-logo, .title-main { animation-duration: 1.5s !important; }
+
+  /* Floating orbs & particles: moderate speed */
+  .orb, .floating-orbs .orb { animation-duration: 4s !important; }
+  .card-particle, .floating-particles .card-particle { animation-duration: 2s !important; }
+
+  /* Icon and levitation animations */
+  .icon-levitate, .feature-icon, .btn-shine, .avatar-glow { animation-duration: 2s !important; }
+
+  /* Icon spin / title shimmer */
+  .icon-spin, .title-shimmer, .gradientShift { animation-duration: 1.5s !important; }
+
+  /* Soften hover transforms */
+  .feature:hover { transform: translateY(-4px) scale(1.01) !important; box-shadow: 0 12px 30px rgba(0,0,0,0.5) !important; }
+  .button:hover, .nav-item:hover, .forge-hero-btn:hover { transform: translateY(-2px) !important; box-shadow: 0 8px 20px rgba(0,0,0,0.45) !important; }
+
+  /* Reduce heavy shadows globally a bit */
+  .app-nav, .messages-panel, .composer-panel, .hero-forge-modal .forge-container { box-shadow: 0 10px 25px rgba(0,0,0,0.7) !important; }
+}
+
 .input-container {
   display: flex;
   gap: 1rem;
@@ -2095,8 +2250,9 @@ textarea[disabled] {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
+  /* prefer 100% so presence of vertical scrollbar doesn't add horizontal overflow */
+  width: 100%;
+  height: 100%;
   pointer-events: none;
   z-index: 0;
   
@@ -2364,8 +2520,9 @@ textarea[disabled] {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
+  /* use 100% to avoid horizontal scrollbars on some platforms where 100vw includes scrollbar width */
+  width: 100%;
+  height: 100%;
   background: rgba(0, 0, 0, 0.8);
   backdrop-filter: blur(10px);
   z-index: 1000;
