@@ -2,6 +2,9 @@
 
 An intelligent story generation platform that uses AI to help create and modify stories based on uploaded books.
 
+## Architecture diagram:
+<img src="./diagram.png" alt="AI storybook diagram">
+
 ## 🌟 Features
 
 - 📚 **PDF Book Upload & Processing**: Upload PDF books for AI analysis
